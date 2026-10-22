@@ -1,0 +1,8 @@
+node_modules
+dist
+dist-android
+.expo
+package-lock.json
+assets
+artifacts
+*.zip

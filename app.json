@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "Open Taboo",
+    "slug": "open-taboo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "scheme": "opentaboo",
+    "backgroundColor": "#291148",
+    "android": {
+      "package": "it.university.opentaboo",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#291148"
+      },
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ],
+      "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"]
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "it.university.opentaboo"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "Open Taboo",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#291148",
+          "image": "./assets/adaptive-icon.png",
+          "imageWidth": 180
+        }
+      ],
+      "expo-font",
+      "expo-status-bar",
+      "expo-asset"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4e8ad3b0-a13a-42ea-8d1e-a5ad2e19b8c9"
+      }
+    }
+  }
+}

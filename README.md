@@ -13,7 +13,7 @@ An independent project by **Gleetch**.
 
 ## Install on Android
 
-1. Download the `.apk` file provided in this repository to your Android phone.
+1. Download the `.apk` file from [Releases](https://github.com/PaoloConteDev/OpenTaboo/releases) to your Android phone.
 2. Open the downloaded file and follow the Android installation prompts.
 3. Launch **Open Taboo** and start playing.
 
@@ -186,6 +186,6 @@ npm run format:check
 
 Created by **Gleetch**. Built with Expo, React Native, React, and TypeScript. The interface uses **Outfit** fonts and **Lucide** icons; fonts, dependencies, and other third-party components retain their respective licenses. See [third-party notices](THIRD_PARTY_NOTICES.md).
 
-This repository does not currently include a project-wide `LICENSE` file. A project license should be added before offering the original code under specific open-source terms.
+The project's original code is available under the [MIT License](LICENSE).
 
 Open Taboo is an independent project inspired by the word game Taboo and the [Marmalade Game Studio app](https://play.google.com/store/apps/details?id=com.marmalade.taboo). It is not affiliated with or endorsed by Hasbro or Marmalade Game Studio. The project does not include logos, screenshots, sounds, or card databases extracted from the official app. Third-party trademarks remain the property of their respective owners.
