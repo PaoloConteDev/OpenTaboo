@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LanguageProvider';
 import React from 'react';
 import { Pressable, Switch, TextInput, View, useWindowDimensions } from 'react-native';
 import { Check, Settings2, Users } from 'lucide-react-native';
@@ -50,6 +51,7 @@ export function Setup({
   onChange: (s: Settings) => void;
   onStart: () => void;
 }) {
+  const { t } = useI18n();
   const { width } = useWindowDimensions();
   const mobile = width < 800;
   const update = <K extends keyof Settings>(key: K, value: Settings[K]) =>
@@ -57,20 +59,20 @@ export function Setup({
   return (
     <View style={{ paddingTop: 32 }}>
       <SectionHeading
-        eyebrow="FACCIAMO SQUADRA"
-        title="La vostra partita. Le vostre regole."
-        subtitle="Bastano pochi tocchi per mettere tutti d’accordo. Forse."
+        eyebrow={t('FACCIAMO SQUADRA')}
+        title={t('La vostra partita. Le vostre regole.')}
+        subtitle={t('Bastano pochi tocchi per mettere tutti d’accordo. Forse.')}
       />
       <View style={{ flexDirection: mobile ? 'column' : 'row', gap: 24, alignItems: 'flex-start' }}>
         <View style={{ flex: 1, width: mobile ? '100%' : undefined, gap: 24 }}>
           <View style={panel}>
             <View style={labelRow}>
               <Users size={19} color={C.coral} />
-              <Txt style={panelTitle}>Chi c’è in squadra?</Txt>
+              <Txt style={panelTitle}>{t('Chi c’è in squadra?')}</Txt>
             </View>
             <Choice
-              label="Numero di squadre"
-              values={[2, 3, 4].map((n) => ({ value: n, label: `${n} squadre` }))}
+              label={t('Numero di squadre')}
+              values={[2, 3, 4].map((n) => ({ value: n, label: t('{{0}} squadre', n) }))}
               selected={settings.teamCount}
               onChange={(v) => update('teamCount', v)}
             />
@@ -92,7 +94,7 @@ export function Setup({
                     </Txt>
                   </View>
                   <TextInput
-                    accessibilityLabel={`Nome squadra ${i + 1}`}
+                    accessibilityLabel={t('Nome squadra {{0}}', i + 1)}
                     maxLength={20}
                     value={name}
                     onChangeText={(text) =>
@@ -102,7 +104,7 @@ export function Setup({
                       )
                     }
                     selectTextOnFocus
-                    placeholder={`Squadra ${i + 1}`}
+                    placeholder={t('Squadra {{0}}', i + 1)}
                     placeholderTextColor={C.muted}
                     style={{
                       flex: 1,
@@ -123,54 +125,54 @@ export function Setup({
           <View style={panel}>
             <View style={labelRow}>
               <Settings2 size={19} color={C.orange} />
-              <Txt style={panelTitle}>Il ritmo del gioco</Txt>
+              <Txt style={panelTitle}>{t('Il ritmo del gioco')}</Txt>
             </View>
-            <Setting label="TEMPO PER TURNO">
+            <Setting label={t('TEMPO PER TURNO')}>
               <Choice
-                label="Durata turno"
+                label={t('Durata turno')}
                 values={[30, 45, 60, 90, 120].map((n) => ({ value: n, label: `${n}s` }))}
                 selected={settings.seconds}
                 onChange={(v) => update('seconds', v)}
               />
             </Setting>
-            <Setting label="ROUND · UN TURNO PER OGNI SQUADRA">
+            <Setting label={t('ROUND · UN TURNO PER OGNI SQUADRA')}>
               <Choice
-                label="Round"
+                label={t('Round')}
                 values={[1, 3, 5, 7].map((n) => ({ value: n, label: `${n}` }))}
                 selected={settings.rounds}
                 onChange={(v) => update('rounds', v)}
               />
             </Setting>
-            <Setting label="PENALITÀ PER PAROLA VIETATA">
+            <Setting label={t('PENALITÀ PER PAROLA VIETATA')}>
               <Choice
-                label="Penalità Taboo"
+                label={t('Penalità Taboo')}
                 values={[0, 1, 2].map((n) => ({
                   value: n,
-                  label: n ? `−${n} ${n === 1 ? 'punto' : 'punti'}` : 'Nessuna',
+                  label: n ? `−${n} ${n === 1 ? t('punto') : t('punti')}` : t('Nessuna'),
                 }))}
                 selected={settings.penalty}
                 onChange={(v) => update('penalty', v)}
               />
             </Setting>
-            <Setting label="PASSAGGI DISPONIBILI PER TURNO">
+            <Setting label={t('PASSAGGI DISPONIBILI PER TURNO')}>
               <Choice
-                label="Passaggi"
+                label={t('Passaggi')}
                 values={[
                   { value: 0, label: '0' },
                   { value: 3, label: '3' },
                   { value: 5, label: '5' },
-                  { value: -1, label: 'Illimitati' },
+                  { value: -1, label: t('Illimitati') },
                 ]}
                 selected={settings.maxSkips}
                 onChange={(v) => update('maxSkips', v)}
               />
             </Setting>
-            <Setting label="PENALITÀ PER PASSAGGIO">
+            <Setting label={t('PENALITÀ PER PASSAGGIO')}>
               <Choice
-                label="Penalità passaggio"
+                label={t('Penalità passaggio')}
                 values={[
-                  { value: 0, label: 'Nessuna' },
-                  { value: 1, label: '−1 punto' },
+                  { value: 0, label: t('Nessuna') },
+                  { value: 1, label: t('−1 punto') },
                 ]}
                 selected={settings.skipPenalty}
                 onChange={(v) => update('skipPenalty', v)}
@@ -180,9 +182,9 @@ export function Setup({
         </View>
         <View style={{ flex: 0.85, width: mobile ? '100%' : undefined, gap: 24 }}>
           <View style={panel}>
-            <Txt style={panelTitle}>Cosa mettiamo nel mazzo?</Txt>
+            <Txt style={panelTitle}>{t('Cosa mettiamo nel mazzo?')}</Txt>
             <Txt style={{ color: C.muted, fontSize: 13, marginTop: 7, marginBottom: 20 }}>
-              Scegline almeno uno. Puoi mescolarli tutti.
+              {t('Scegline almeno uno. Puoi mescolarli tutti.')}
             </Txt>
             <View style={{ gap: 10 }}>
               {DECKS.map((deck) => {
@@ -193,7 +195,7 @@ export function Setup({
                     key={deck.id}
                     accessibilityRole="checkbox"
                     accessibilityState={{ checked }}
-                    accessibilityLabel={`Mazzo ${deck.name}`}
+                    accessibilityLabel={t('Mazzo {{0}}', t(deck.name))}
                     onPress={() => {
                       if (checked && settings.decks.length === 1) return;
                       update(
@@ -227,9 +229,9 @@ export function Setup({
                       <Icon size={18} color={deck.color} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Txt style={{ fontSize: 14, fontFamily: FONT.medium }}>{deck.name}</Txt>
+                      <Txt style={{ fontSize: 14, fontFamily: FONT.medium }}>{t(deck.name)}</Txt>
                       <Txt style={{ color: C.muted, fontSize: 11, marginTop: 3 }}>
-                        {CARDS.filter((card) => card.deck === deck.id).length} carte
+                        {CARDS.filter((card) => card.deck === deck.id).length} {t('carte')}
                       </Txt>
                     </View>
                     <View
@@ -249,14 +251,14 @@ export function Setup({
               })}
             </View>
             <ToggleRow
-              title="Effetti sonori"
-              description="Un suono per ogni momento del gioco."
+              title={t('Effetti sonori')}
+              description={t('Un suono per ogni momento del gioco.')}
               value={settings.sound}
               onChange={(v) => update('sound', v)}
             />
             <ToggleRow
-              title="Vibrazione"
-              description="Un piccolo feedback, quando serve."
+              title={t('Vibrazione')}
+              description={t('Un piccolo feedback, quando serve.')}
               value={settings.haptics}
               onChange={(v) => update('haptics', v)}
             />
@@ -271,17 +273,17 @@ export function Setup({
               gap: 17,
             }}
           >
-            <SectionLabel style={{ color: C.orange }}>TUTTO PRONTO?</SectionLabel>
+            <SectionLabel style={{ color: C.orange }}>{t('TUTTO PRONTO?')}</SectionLabel>
             <Txt style={{ fontFamily: FONT.semibold, fontSize: 23 }}>
-              {settings.teamCount} squadre. Una bella sfida.
+              {settings.teamCount} {t('squadre. Una bella sfida.')}
             </Txt>
             <Txt style={{ color: C.muted, fontSize: 14, lineHeight: 23 }}>
-              {settings.rounds} {settings.rounds === 1 ? 'round' : 'round'} · {settings.seconds}{' '}
-              secondi a turno{'\n'}
-              {CARDS.filter((c) => settings.decks.includes(c.deck)).length} carte pronte da
-              indovinare
+              {t('{{0}} round', settings.rounds)} · {settings.seconds} {t('secondi a turno')}
+              {'\n'}
+              {CARDS.filter((c) => settings.decks.includes(c.deck)).length}{' '}
+              {t('carte pronte da indovinare')}
             </Txt>
-            <Button title="Inizia la partita" onPress={onStart} />
+            <Button title={t('Inizia la partita')} onPress={onStart} />
           </View>
         </View>
       </View>

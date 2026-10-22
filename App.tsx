@@ -1,3 +1,5 @@
+import { LanguageProvider, useI18n } from './src/i18n/LanguageProvider';
+import { LANGUAGES } from './src/i18n';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -50,10 +52,11 @@ import { Setup, ToggleRow } from './src/screens/Setup';
 import { Match } from './src/screens/Match';
 import { useFeedback } from './src/hooks/useFeedback';
 import { MatchRecord, loadSave, saveState } from './src/storage';
+import { LanguageFlag } from './src/components/LanguageFlag';
 
 void SplashScreen.preventAutoHideAsync().catch(() => {});
 type Page = 'home' | 'setup' | 'decks' | 'rules' | 'match' | 'history';
-type Dialog = 'settings' | 'replace' | null;
+type Dialog = 'settings' | 'replace' | 'language' | null;
 function Awake() {
   useKeepAwake();
   return null;
@@ -77,13 +80,16 @@ export default function App() {
     );
   return (
     <SafeAreaProvider>
-      <Application />
+      <LanguageProvider>
+        <Application />
+      </LanguageProvider>
     </SafeAreaProvider>
   );
 }
 function Application() {
+  const { t, language, locale, setLanguage, languageStorageError } = useI18n();
   const { width } = useWindowDimensions();
-  const mobile = width < 760;
+  const mobile = width < 1000;
   const insets = useSafeAreaInsets();
   const [page, setPage] = useState<Page>('home');
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
@@ -303,9 +309,9 @@ function Application() {
       </View>
     );
   const tabs: { page: Page; label: string; icon: typeof Play }[] = [
-    { page: 'home', label: 'Gioca', icon: Play },
-    { page: 'decks', label: 'I mazzi', icon: Layers3 },
-    { page: 'rules', label: 'Come si gioca', icon: CircleHelp },
+    { page: 'home', label: t('Gioca'), icon: Play },
+    { page: 'decks', label: t('I mazzi'), icon: Layers3 },
+    { page: 'rules', label: t('Come si gioca'), icon: CircleHelp },
   ];
   return (
     <View
@@ -324,7 +330,7 @@ function Application() {
         >
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Open Taboo, home"
+            accessibilityLabel={t('Open Taboo by Gleetch, home')}
             onPress={() => navigate('home')}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}
           >
@@ -345,7 +351,20 @@ function Application() {
                   lineHeight: 23,
                 }}
               >
-                TABOO<Txt style={{ color: C.coral, fontSize: 22 }}>.</Txt>
+                {t('TABOO')}
+                <Txt style={{ color: C.coral, fontSize: 22 }}>.</Txt>
+              </Txt>
+              <Txt
+                style={{
+                  fontFamily: FONT.medium,
+                  fontSize: 10,
+                  lineHeight: 12,
+                  letterSpacing: 0.5,
+                  color: C.muted,
+                  marginTop: 2,
+                }}
+              >
+                by Gleetch
               </Txt>
             </View>
           </Pressable>
@@ -384,19 +403,35 @@ function Application() {
               ))}
             </View>
           )}
-          <View style={{ flexDirection: 'row', gap: mobile ? 8 : 13, alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', gap: mobile ? 6 : 13, alignItems: 'center' }}>
             {!mobile && (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginRight: 8 }}>
                 <WifiOff size={13} color={C.mint} />
                 <Txt style={{ color: C.mint, fontSize: 11, fontFamily: FONT.medium }}>
-                  OFFLINE & INSIEME
+                  {t('OFFLINE & INSIEME')}
                 </Txt>
               </View>
             )}
-            <IconButton icon={Trophy} label="Storico partite" onPress={() => navigate('history')} />
+            <IconButton
+              compact={mobile}
+              label={t('Lingua: {{0}}', LANGUAGES.find((item) => item.id === language)!.name)}
+              onPress={() => {
+                pause();
+                setDialog('language');
+              }}
+            >
+              <LanguageFlag language={language} size={24} />
+            </IconButton>
+            <IconButton
+              icon={Trophy}
+              compact={mobile}
+              label={t('Storico partite')}
+              onPress={() => navigate('history')}
+            />
             <IconButton
               icon={Settings2}
-              label="Impostazioni"
+              compact={mobile}
+              label={t('Impostazioni')}
               onPress={() => {
                 pause();
                 setDialog('settings');
@@ -416,14 +451,17 @@ function Application() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={{ width: '100%', maxWidth: 1100, alignSelf: 'center', flex: 1 }}>
-          {storageError && (
+          {(storageError || languageStorageError) && (
             <View
               accessibilityRole="alert"
               style={{ marginTop: 15, backgroundColor: '#FF817C20', borderRadius: 10, padding: 12 }}
             >
               <Txt style={{ fontSize: 13, color: C.coral }}>
-                Salvataggio non disponibile. La partita prosegue; mantieni l’app aperta per
-                conservarla.
+                {t(
+                  languageStorageError
+                    ? 'Impossibile salvare la lingua. La scelta resta attiva finché l’app è aperta.'
+                    : 'Salvataggio non disponibile. La partita prosegue; mantieni l’app aperta per conservarla.',
+                )}
               </Txt>
             </View>
           )}
@@ -440,7 +478,7 @@ function Application() {
               }}
             >
               <ArrowLeft size={14} color={C.muted} />
-              <Txt style={{ color: C.muted, fontSize: 12 }}>Torna alla home</Txt>
+              <Txt style={{ color: C.muted, fontSize: 12 }}>{t('Torna alla home')}</Txt>
             </Pressable>
           )}
           {page === 'home' && (
@@ -506,20 +544,22 @@ function Application() {
           {page === 'history' && (
             <View style={{ paddingTop: 32, gap: 18 }}>
               <SectionHeading
-                eyebrow="I VOSTRI MOMENTI DI GLORIA"
-                title="Le partite da ricordare."
-                subtitle="Le ultime 20 sfide, salvate solo su questo dispositivo."
+                eyebrow={t('I VOSTRI MOMENTI DI GLORIA')}
+                title={t('Le partite da ricordare.')}
+                subtitle={t('Le ultime 20 sfide, salvate solo su questo dispositivo.')}
               />
               {records.length === 0 ? (
                 <View style={s.empty}>
                   <Trophy size={48} color={C.orange} strokeWidth={1.5} />
                   <Txt style={{ fontSize: 26, fontFamily: FONT.semibold }}>
-                    Il podio vi aspetta.
+                    {t('Il podio vi aspetta.')}
                   </Txt>
                   <Txt style={{ color: C.muted, textAlign: 'center', lineHeight: 24 }}>
-                    Giocate la prima partita per iniziare{'\n'}a scrivere la vostra storia.
+                    {t('Giocate la prima partita per iniziare')}
+                    {'\n'}
+                    {t('a scrivere la vostra storia.')}
                   </Txt>
-                  <Button title="Creiamo una partita" onPress={() => navigate('setup')} />
+                  <Button title={t('Creiamo una partita')} onPress={() => navigate('setup')} />
                 </View>
               ) : (
                 records.map((record) => {
@@ -538,14 +578,14 @@ function Application() {
                         }}
                       >
                         <Txt style={{ color: C.muted, fontSize: 12 }}>
-                          {new Date(record.id).toLocaleDateString('it-IT', {
+                          {new Date(record.id).toLocaleDateString(locale, {
                             day: 'numeric',
                             month: 'long',
                             year: 'numeric',
                           })}
                         </Txt>
                         <Txt style={{ color: C.muted, fontSize: 12 }}>
-                          {record.rounds} round · {record.guessed} indovinate
+                          {t('{{0}} round', record.rounds)} · {record.guessed} {t('indovinate')}
                         </Txt>
                       </View>
                       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 24 }}>
@@ -573,7 +613,7 @@ function Application() {
           {page !== 'home' && (
             <View style={{ paddingVertical: 28, alignItems: 'center' }}>
               <Txt style={{ color: '#8C749F', fontSize: 10, letterSpacing: 1 }}>
-                OPEN TABOO · PENSA. PARLA. OSA.
+                {t('OPEN TABOO · PENSA. PARLA. OSA.')}
               </Txt>
             </View>
           )}
@@ -627,31 +667,78 @@ function Application() {
                 marginBottom: 18,
               }}
             >
-              <Txt style={{ fontFamily: FONT.semibold, fontSize: 25 }}>
-                {dialog === 'replace' ? 'Si ricomincia?' : 'Il tuo modo di giocare.'}
+              <Txt style={{ fontFamily: FONT.semibold, fontSize: 25, flex: 1, marginRight: 12 }}>
+                {dialog === null
+                  ? ''
+                  : dialog === 'language'
+                    ? t('Scegli la lingua')
+                    : dialog === 'replace'
+                      ? t('Si ricomincia?')
+                      : t('Il tuo modo di giocare.')}
               </Txt>
-              <IconButton icon={X} label="Chiudi finestra" onPress={() => setDialog(null)} />
+              <IconButton icon={X} label={t('Chiudi finestra')} onPress={() => setDialog(null)} />
             </View>
             <ScrollView keyboardShouldPersistTaps="handled">
-              {dialog === 'replace' ? (
+              {dialog === 'language' ? (
+                <View style={{ gap: 10 }}>
+                  <Txt style={{ color: C.muted, lineHeight: 23, marginBottom: 12 }}>
+                    {t('Menu e carte nella tua lingua, anche offline.')}
+                  </Txt>
+                  {LANGUAGES.map((item) => (
+                    <Pressable
+                      key={item.id}
+                      accessibilityRole="radio"
+                      accessibilityState={{ checked: item.id === language }}
+                      accessibilityLabel={item.name}
+                      onPress={() => {
+                        setLanguage(item.id);
+                        setDialog(null);
+                      }}
+                      style={({ pressed }) => ({
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 16,
+                        padding: 17,
+                        borderRadius: 14,
+                        borderWidth: 1,
+                        borderColor: item.id === language ? C.orange : C.line,
+                        backgroundColor: pressed ? C.panelLight : C.panel,
+                      })}
+                    >
+                      <LanguageFlag language={item.id} />
+                      <Txt style={{ flex: 1, fontFamily: FONT.medium, fontSize: 18 }}>
+                        {item.name}
+                      </Txt>
+                      {item.id === language && (
+                        <Check
+                          accessibilityLabel={t('Lingua selezionata')}
+                          size={22}
+                          color={C.orange}
+                        />
+                      )}
+                    </Pressable>
+                  ))}
+                </View>
+              ) : dialog === 'replace' ? (
                 <View style={{ gap: 22 }}>
                   <Txt style={{ color: C.muted, lineHeight: 25 }}>
-                    C’è una partita ancora in corso. Iniziandone una nuova, i progressi di quella
-                    partita verranno sostituiti.
+                    {t(
+                      'C’è una partita ancora in corso. Iniziandone una nuova, i progressi di quella partita verranno sostituiti.',
+                    )}
                   </Txt>
-                  <Button title="Sì, nuova partita" onPress={startMatch} />
+                  <Button title={t('Sì, nuova partita')} onPress={startMatch} />
                   <Button
-                    title="Conserva la partita"
+                    title={t('Conserva la partita')}
                     onPress={() => setDialog(null)}
                     secondary
                     icon={null}
                   />
                 </View>
-              ) : (
+              ) : dialog === 'settings' ? (
                 <View>
                   <ToggleRow
-                    title="Effetti sonori"
-                    description="Segnali per indovinate, penalità e timer."
+                    title={t('Effetti sonori')}
+                    description={t('Segnali per indovinate, penalità e timer.')}
                     value={settings.sound}
                     onChange={(v) => {
                       setSettings((s) => ({ ...s, sound: v }));
@@ -660,8 +747,8 @@ function Application() {
                     }}
                   />
                   <ToggleRow
-                    title="Vibrazione"
-                    description="Feedback tattile sui dispositivi compatibili."
+                    title={t('Vibrazione')}
+                    description={t('Feedback tattile sui dispositivi compatibili.')}
                     value={settings.haptics}
                     onChange={(v) => {
                       setSettings((s) => ({ ...s, haptics: v }));
@@ -680,23 +767,24 @@ function Application() {
                   >
                     <SectionLabel>OPEN TABOO · 1.0.0</SectionLabel>
                     <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 22 }}>
-                      Progetto universitario indipendente. Grafica, suoni e carte originali.
-                      Ispirato al gioco di parole Taboo; non affiliato a Hasbro o Marmalade Game
-                      Studio.
+                      {t(
+                        'Progetto indipendente. Grafica, suoni e carte originali. Ispirato al gioco di parole Taboo; non affiliato a Hasbro o Marmalade Game Studio.',
+                      )}
                     </Txt>
                     <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 22 }}>
-                      Nessun account, nessun tracciamento. Preferenze, partita in corso e risultati
-                      restano sul dispositivo.
+                      {t(
+                        'Nessun account, nessun tracciamento. Preferenze, partita in corso e risultati restano sul dispositivo.',
+                      )}
                     </Txt>
                   </View>
                   <Button
-                    title="Perfetto, continuiamo"
+                    title={t('Perfetto, continuiamo')}
                     onPress={() => setDialog(null)}
                     style={{ marginTop: 25 }}
                     icon={Check}
                   />
                 </View>
-              )}
+              ) : null}
             </ScrollView>
           </View>
         </View>

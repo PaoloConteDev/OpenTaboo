@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LanguageProvider';
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -24,6 +25,7 @@ import {
 } from 'lucide-react-native';
 import { C, FONT } from '../theme';
 import { Card } from '../data/cards';
+import { getLocalizedCard } from '../data/localizedCards';
 
 export function Txt({ children, style, ...props }: React.ComponentProps<typeof Text>) {
   return (
@@ -34,23 +36,31 @@ export function Txt({ children, style, ...props }: React.ComponentProps<typeof T
 }
 export function IconButton({
   icon: Icon,
+  children,
   onPress,
   label,
   color = C.text,
+  compact = false,
 }: {
-  icon: LucideIcon;
+  icon?: LucideIcon;
+  children?: React.ReactNode;
   onPress: () => void;
   label: string;
   color?: string;
+  compact?: boolean;
 }) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      style={({ pressed }) => [s.iconButton, { backgroundColor: pressed ? C.panelLight : C.panel }]}
+      style={({ pressed }) => [
+        s.iconButton,
+        compact && { width: 38, height: 44 },
+        { backgroundColor: pressed ? C.panelLight : C.panel },
+      ]}
     >
-      <Icon size={21} color={color} strokeWidth={1.8} />
+      {children ?? (Icon && <Icon size={21} color={color} strokeWidth={1.8} />)}
     </Pressable>
   );
 }
@@ -89,7 +99,15 @@ export function Button({
         style,
       ]}
     >
-      <Txt style={{ fontFamily: FONT.semibold, fontSize: 17, color: secondary ? C.text : C.ink }}>
+      <Txt
+        style={{
+          fontFamily: FONT.semibold,
+          fontSize: 17,
+          color: secondary ? C.text : C.ink,
+          flexShrink: 1,
+          textAlign: 'center',
+        }}
+      >
         {title}
       </Txt>
       {Icon && <Icon size={20} color={secondary ? C.text : C.ink} strokeWidth={2.2} />}
@@ -187,6 +205,7 @@ export function WordCard({
   compact?: boolean;
   dense?: boolean;
 }) {
+  const { t, locale } = useI18n();
   return (
     <View
       style={[s.wordCard, compact && { width: 244, minHeight: 340 }, dense && { minHeight: 0 }]}
@@ -207,7 +226,7 @@ export function WordCard({
           adjustsFontSizeToFit
           style={[s.mainWord, (compact || dense) && { fontSize: 30 }]}
         >
-          {card.word.toLocaleUpperCase('it')}
+          {card.word.toLocaleUpperCase(locale)}
         </Txt>
       </View>
       <View style={[s.forbiddenBody, dense && { paddingTop: 12, paddingBottom: 0 }]}>
@@ -216,7 +235,7 @@ export function WordCard({
           <Txt
             style={{ color: '#9C7D8A', fontSize: 9, letterSpacing: 2, fontFamily: FONT.semibold }}
           >
-            NON PUOI DIRE
+            {t('NON PUOI DIRE')}
           </Txt>
           <View style={s.hairline} />
         </View>
@@ -249,7 +268,7 @@ export function WordCard({
       </View>
       <View style={[s.cardFoot, dense && { paddingTop: 6, paddingBottom: 12 }]}>
         <Txt style={{ color: '#AA939E', fontSize: 9, letterSpacing: 1.5 }}>
-          UNA PAROLA. MILLE POSSIBILITÀ.
+          {t('UNA PAROLA. MILLE POSSIBILITÀ.')}
         </Txt>
         <View style={s.dot} />
       </View>
@@ -257,6 +276,7 @@ export function WordCard({
   );
 }
 export function CardBack({ color = C.orange }: { color?: string }) {
+  const { t } = useI18n();
   return (
     <View style={[s.backCard, { backgroundColor: color }]}>
       <View style={s.backOutline}>
@@ -271,16 +291,18 @@ export function CardBack({ color = C.orange }: { color?: string }) {
             textAlign: 'center',
           }}
         >
-          OPEN{'\n'}TABOO
+          OPEN{'\n'}
+          {t('TABOO')}
         </Txt>
         <Txt style={{ fontSize: 10, color: C.ink, letterSpacing: 3, marginTop: 18 }}>
-          PENSA. PARLA. OSA.
+          {t('PENSA. PARLA. OSA.')}
         </Txt>
       </View>
     </View>
   );
 }
 export function FloatingCards() {
+  const { t, language } = useI18n();
   const value = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     const a = Animated.loop(
@@ -319,20 +341,12 @@ export function FloatingCards() {
         <CardBack />
       </View>
       <View style={{ position: 'absolute', left: 43, top: 5, transform: [{ rotate: '5deg' }] }}>
-        <WordCard
-          compact
-          card={{
-            id: 'demo',
-            word: 'Pizza',
-            forbidden: ['Forno', 'Mozzarella', 'Pomodoro', 'Margherita', 'Napoli'],
-            deck: 'classico',
-          }}
-        />
+        <WordCard compact card={getLocalizedCard('classico-1', language)} />
       </View>
       <View style={s.cardSticker}>
         <Sparkles color={C.ink} size={15} />
         <Txt style={{ fontSize: 11, color: C.ink, fontFamily: FONT.semibold }}>
-          Facile? Prova a dirlo!
+          {t('Facile? Prova a dirlo!')}
         </Txt>
       </View>
     </Animated.View>
@@ -367,6 +381,7 @@ export function BackLink({
   onPress: () => void;
   title?: string;
 }) {
+  const { t } = useI18n();
   return (
     <Pressable
       accessibilityRole="button"
@@ -380,7 +395,7 @@ export function BackLink({
       }}
     >
       <ChevronLeft size={16} color={C.muted} />
-      <Txt style={{ fontSize: 13, color: C.muted }}>{title}</Txt>
+      <Txt style={{ fontSize: 13, color: C.muted }}>{t(title)}</Txt>
     </Pressable>
   );
 }

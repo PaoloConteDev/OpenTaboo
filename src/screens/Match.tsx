@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LanguageProvider';
 import { useEffect, useRef } from 'react';
 import { Animated, Platform, Pressable, View, useWindowDimensions } from 'react-native';
 import {
@@ -15,7 +16,7 @@ import {
   X,
 } from 'lucide-react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { CARD_MAP } from '../data/cards';
+import { getLocalizedCard } from '../data/localizedCards';
 import {
   Game,
   Outcome,
@@ -65,11 +66,12 @@ export function Match({
   onReplay: () => void;
   onSound: () => void;
 }) {
+  const { t, language } = useI18n();
   const { width } = useWindowDimensions();
   const mobile = width < 800;
   const team = activeTeam(game);
   const color = TEAM_COLORS[team]!;
-  const card = CARD_MAP.get(game.queue[game.cursor]!)!;
+  const card = getLocalizedCard(game.queue[game.cursor]!, language);
   const motion = useRef(new Animated.Value(1)).current;
   useEffect(() => {
     motion.setValue(0);
@@ -92,7 +94,9 @@ export function Match({
         <View style={{ alignItems: 'center', paddingVertical: 20 }}>
           <Confetti celebration />
           <Trophy color={C.orange} size={58} strokeWidth={1.4} />
-          <SectionLabel style={{ marginTop: 22, color: C.orange }}>BELLA PARTITA!</SectionLabel>
+          <SectionLabel style={{ marginTop: 22, color: C.orange }}>
+            {t('BELLA PARTITA!')}
+          </SectionLabel>
           <Txt
             accessibilityRole="header"
             style={{
@@ -102,18 +106,24 @@ export function Match({
               marginTop: 12,
             }}
           >
-            {winners.length > 1 ? 'La vittoria si condivide.' : `${winners[0]!.name} vincono!`}
+            {winners.length > 1
+              ? t('La vittoria si condivide.')
+              : t('{{0}} vincono!', winners[0]!.name)}
           </Txt>
           <Txt style={{ color: C.muted, marginTop: 12, textAlign: 'center', lineHeight: 25 }}>
             {winners.length > 1
-              ? `${winners.map((t) => t.name).join(' e ')} a pari merito con ${high} punti.`
-              : `${high} punti e un sacco di parole da raccontare.`}
+              ? t(
+                  '{{0}} a pari merito con {{1}} punti.',
+                  winners.map((team) => team.name).join(` ${t('e')} `),
+                  high,
+                )
+              : t('{{0}} punti e un sacco di parole da raccontare.', high)}
           </Txt>
         </View>
         <View style={{ gap: 10 }}>
-          {ranked.map((t) => (
+          {ranked.map((rankedTeam) => (
             <View
-              key={t.index}
+              key={rankedTeam.index}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -121,41 +131,49 @@ export function Match({
                 padding: 23,
                 borderRadius: 18,
                 borderWidth: 1,
-                borderColor: t.score === high ? '#FFB64C70' : C.line,
+                borderColor: rankedTeam.score === high ? '#FFB64C70' : C.line,
                 backgroundColor: C.panel,
               }}
             >
               <Txt style={{ color: C.muted, width: 22, fontFamily: FONT.bold, fontSize: 20 }}>
-                {ranked.findIndex((r) => r.score === t.score) + 1}
+                {ranked.findIndex((r) => r.score === rankedTeam.score) + 1}
               </Txt>
               <View
                 style={{
-                  backgroundColor: `${TEAM_COLORS[t.index]}20`,
+                  backgroundColor: `${TEAM_COLORS[rankedTeam.index]}20`,
                   padding: 10,
                   borderRadius: 12,
                 }}
               >
-                <Users size={22} color={TEAM_COLORS[t.index]} />
+                <Users size={22} color={TEAM_COLORS[rankedTeam.index]} />
               </View>
-              <Txt style={{ flex: 1, fontFamily: FONT.semibold, fontSize: 20 }}>{t.name}</Txt>
-              <Txt style={{ color: TEAM_COLORS[t.index], fontFamily: FONT.bold, fontSize: 30 }}>
-                {t.score}
+              <Txt style={{ flex: 1, fontFamily: FONT.semibold, fontSize: 20 }}>
+                {rankedTeam.name}
               </Txt>
-              <Txt style={{ color: C.muted, fontSize: 12 }}>punti</Txt>
+              <Txt
+                style={{
+                  color: TEAM_COLORS[rankedTeam.index],
+                  fontFamily: FONT.bold,
+                  fontSize: 30,
+                }}
+              >
+                {rankedTeam.score}
+              </Txt>
+              <Txt style={{ color: C.muted, fontSize: 12 }}>{t('punti')}</Txt>
             </View>
           ))}
         </View>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
-          <Button title="Rivincita?" onPress={onReplay} icon={RotateCcw} />
-          <Button title="Torna alla home" onPress={onHome} secondary icon={null} />
+          <Button title={t('Rivincita?')} onPress={onReplay} icon={RotateCcw} />
+          <Button title={t('Torna alla home')} onPress={onHome} secondary icon={null} />
         </View>
         <Txt style={{ textAlign: 'center', color: C.muted, fontSize: 12 }}>
-          {game.history.length} turni giocati ·{' '}
+          {game.history.length} {t('turni giocati ·')}{' '}
           {game.history.reduce(
             (n, t) => n + t.entries.filter((e) => e.outcome === 'correct').length,
             0,
           )}{' '}
-          parole indovinate
+          {t('parole indovinate')}
         </Txt>
       </View>
     );
@@ -164,25 +182,25 @@ export function Match({
     return (
       <View style={{ maxWidth: 740, alignSelf: 'center', width: '100%', paddingTop: 35, gap: 22 }}>
         <SectionHeading
-          eyebrow="TURNO FINITO. COME È ANDATA?"
-          title={`Bel turno, ${game.teams[team]!.name}!`}
-          subtitle="Controllate le carte: toccate un esito per correggerlo, poi confermate."
+          eyebrow={t('TURNO FINITO. COME È ANDATA?')}
+          title={t('Bel turno, {{0}}!', game.teams[team]!.name)}
+          subtitle={t('Controllate le carte: toccate un esito per correggerlo, poi confermate.')}
         />
         <View style={{ flexDirection: 'row', gap: 12 }}>
           {[
             {
               value: game.entries.filter((e) => e.outcome === 'correct').length,
-              label: 'INDOVINATE',
+              label: t('INDOVINATE'),
               color: C.mint,
             },
             {
               value: game.entries.filter((e) => e.outcome === 'taboo').length,
-              label: 'TABOO',
+              label: t('TABOO'),
               color: C.coral,
             },
             {
               value: game.entries.filter((e) => e.outcome === 'skip').length,
-              label: 'PASSATE',
+              label: t('PASSATE'),
               color: C.purple,
             },
           ].map((stat) => (
@@ -207,7 +225,7 @@ export function Match({
         <View style={{ gap: 8 }}>
           {game.entries.length === 0 && (
             <Txt style={{ color: C.muted, textAlign: 'center', padding: 25 }}>
-              Nessuna carta giocata in questo turno. Il prossimo andrà meglio!
+              {t('Nessuna carta giocata in questo turno. Il prossimo andrà meglio!')}
             </Txt>
           )}
           {game.entries.map((entry, i) => (
@@ -224,20 +242,20 @@ export function Match({
               }}
             >
               <Txt style={{ flex: 1, minWidth: 100, fontFamily: FONT.medium }}>
-                {CARD_MAP.get(entry.cardId)!.word}
+                {getLocalizedCard(entry.cardId, language).word}
               </Txt>
               <View style={{ flexDirection: 'row', gap: 5 }}>
                 {(
                   [
-                    { outcome: 'correct', icon: Check, color: C.mint, label: 'Indovinata' },
-                    { outcome: 'taboo', icon: X, color: C.coral, label: 'Taboo' },
-                    { outcome: 'skip', icon: SkipForward, color: C.purple, label: 'Passata' },
+                    { outcome: 'correct', icon: Check, color: C.mint, label: t('Indovinata') },
+                    { outcome: 'taboo', icon: X, color: C.coral, label: t('Taboo') },
+                    { outcome: 'skip', icon: SkipForward, color: C.purple, label: t('Passata') },
                   ] as const
                 ).map(({ outcome, icon: Icon, color: col, label }) => (
                   <Pressable
                     key={outcome}
                     accessibilityRole="button"
-                    accessibilityLabel={`${CARD_MAP.get(entry.cardId)!.word}: ${label}`}
+                    accessibilityLabel={`${getLocalizedCard(entry.cardId, language).word}: ${label}`}
                     accessibilityState={{ selected: entry.outcome === outcome }}
                     onPress={() => onEdit(i, outcome)}
                     style={{
@@ -277,7 +295,7 @@ export function Match({
             alignItems: 'center',
           }}
         >
-          <Txt style={{ fontFamily: FONT.medium }}>Punti di questo turno</Txt>
+          <Txt style={{ fontFamily: FONT.medium }}>{t('Punti di questo turno')}</Txt>
           <Txt
             style={{
               fontFamily: FONT.bold,
@@ -292,13 +310,13 @@ export function Match({
         <Button
           title={
             game.turn + 1 === game.teams.length * game.settings.rounds
-              ? 'Scopri i vincitori'
-              : `Conferma · tocca a ${game.teams[nextTeam]!.name}`
+              ? t('Scopri i vincitori')
+              : t('Conferma · tocca a {{0}}', game.teams[nextTeam]!.name)
           }
           onPress={onCommit}
         />
         <Txt style={{ color: C.muted, fontSize: 12, textAlign: 'center', marginBottom: 25 }}>
-          Il punteggio viene assegnato quando confermi il turno.
+          {t('Il punteggio viene assegnato quando confermi il turno.')}
         </Txt>
       </View>
     );
@@ -315,10 +333,10 @@ export function Match({
       >
         <View style={{ gap: 7, flex: 1 }}>
           <SectionLabel>
-            ROUND {currentRound(game)} DI {game.settings.rounds}
+            {t('ROUND')} {currentRound(game)} {t('DI')} {game.settings.rounds}
           </SectionLabel>
           <Txt style={{ fontFamily: FONT.semibold, fontSize: mobile ? 24 : 30 }}>
-            La parola a{' '}
+            {t('La parola a')}{' '}
             <Txt style={{ color, fontFamily: FONT.semibold, fontSize: mobile ? 24 : 30 }}>
               {game.teams[team]!.name}
             </Txt>
@@ -327,11 +345,11 @@ export function Match({
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <IconButton
             icon={game.settings.sound ? Volume2 : VolumeX}
-            label="Attiva o disattiva audio"
+            label={t('Attiva o disattiva audio')}
             onPress={onSound}
           />
           {game.phase === 'playing' && (
-            <IconButton icon={Pause} label="Metti in pausa" onPress={onPause} />
+            <IconButton icon={Pause} label={t('Metti in pausa')} onPress={onPause} />
           )}
         </View>
       </View>
@@ -344,7 +362,7 @@ export function Match({
       >
         <View style={{ width: mobile ? '100%' : 240, gap: 16 }}>
           <View style={{ backgroundColor: C.panel, borderRadius: 20, padding: 20, gap: 16 }}>
-            <SectionLabel>LA CLASSIFICA</SectionLabel>
+            <SectionLabel>{t('LA CLASSIFICA')}</SectionLabel>
             <View style={{ flexDirection: mobile ? 'row' : 'column', gap: 12, flexWrap: 'wrap' }}>
               {game.teams.map((t, i) => (
                 <View
@@ -397,9 +415,9 @@ export function Match({
               }}
             >
               <Hand size={24} color={C.purple} />
-              <Txt style={{ fontFamily: FONT.medium }}>Occhio alle parole!</Txt>
+              <Txt style={{ fontFamily: FONT.medium }}>{t('Occhio alle parole!')}</Txt>
               <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 22 }}>
-                Un avversario controlla la carta. Se senti una parola vietata, premi Taboo!
+                {t('Un avversario controlla la carta. Se senti una parola vietata, premi Taboo!')}
               </Txt>
             </View>
           )}
@@ -426,16 +444,17 @@ export function Match({
                     <CardBack color={color} />
                   </View>
                   <Txt style={{ fontFamily: FONT.semibold, fontSize: 25, textAlign: 'center' }}>
-                    Pronti a non dirlo?
+                    {t('Pronti a non dirlo?')}
                   </Txt>
                   <Txt
                     style={{ color: C.muted, lineHeight: 24, textAlign: 'center', maxWidth: 370 }}
                   >
-                    Passa il telefono a chi descrive.{'\n'}Solo l’indiziatore e il controllore
-                    guardano le carte.
+                    {t('Passa il telefono a chi descrive.')}
+                    {'\n'}
+                    {t('Solo l’indiziatore e il controllore guardano le carte.')}
                   </Txt>
                   <Button
-                    title={`Via! · ${game.settings.seconds} secondi`}
+                    title={t('Via! · {{0}} secondi', game.settings.seconds)}
                     onPress={onStart}
                     icon={Play}
                     color={color}
@@ -446,14 +465,14 @@ export function Match({
                 <View
                   style={{ height: 470, alignItems: 'center', justifyContent: 'center', gap: 18 }}
                 >
-                  <Pill color={color}>SI PARTE TRA…</Pill>
+                  <Pill color={color}>{t('SI PARTE TRA…')}</Pill>
                   <Txt
                     accessibilityLiveRegion="assertive"
                     style={{ fontFamily: FONT.black, fontSize: 150, color }}
                   >
-                    {countdown || 'Via!'}
+                    {countdown || t('Via!')}
                   </Txt>
-                  <Txt style={{ color: C.muted }}>Respira. Trova le parole. Divertiti.</Txt>
+                  <Txt style={{ color: C.muted }}>{t('Respira. Trova le parole. Divertiti.')}</Txt>
                 </View>
               )}
             </View>
@@ -472,7 +491,7 @@ export function Match({
               >
                 <Timer remaining={game.remainingMs} total={game.settings.seconds * 1000} />
                 <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                  <SectionLabel>PUNTI DEL TURNO</SectionLabel>
+                  <SectionLabel>{t('PUNTI DEL TURNO')}</SectionLabel>
                   <Txt style={{ fontFamily: FONT.bold, fontSize: 30, color: C.mint }}>
                     {turnPoints(game) > 0 ? '+' : ''}
                     {turnPoints(game)}
@@ -504,23 +523,23 @@ export function Match({
                 }}
               >
                 <Action
-                  label="Taboo!"
+                  label={t('Taboo!')}
                   sub={`−${game.settings.penalty}`}
                   color={C.coral}
                   icon={X}
                   onPress={() => onAnswer('taboo')}
                 />
                 <Action
-                  label="Passa"
-                  sub={skipsLeft(game) === Infinity ? '∞' : `${skipsLeft(game)} rimasti`}
+                  label={t('Passa')}
+                  sub={skipsLeft(game) === Infinity ? '∞' : t('{{0}} rimasti', skipsLeft(game))}
                   color={C.purple}
                   icon={SkipForward}
                   onPress={() => onAnswer('skip')}
                   disabled={skipsLeft(game) === 0}
                 />
                 <Action
-                  label="Indovinata"
-                  sub="+1 punto"
+                  label={t('Indovinata')}
+                  sub={t('+1 punto')}
                   color={C.mint}
                   icon={Check}
                   onPress={() => onAnswer('correct')}
@@ -541,15 +560,20 @@ export function Match({
               <View style={{ backgroundColor: C.panel, padding: 24, borderRadius: 50 }}>
                 <Pause size={38} color={C.orange} />
               </View>
-              <Txt style={{ fontFamily: FONT.bold, fontSize: 34 }}>Parole in pausa.</Txt>
+              <Txt style={{ fontFamily: FONT.bold, fontSize: 34 }}>{t('Parole in pausa.')}</Txt>
               <Txt style={{ color: C.muted, textAlign: 'center', lineHeight: 24 }}>
-                La carta resta nascosta. Avete ancora {Math.ceil(game.remainingMs / 1000)} secondi
-                per farvi capire.
+                {t('La carta resta nascosta. Avete ancora')} {Math.ceil(game.remainingMs / 1000)}{' '}
+                {t('secondi per farvi capire.')}
               </Txt>
-              <Button title="Riprendi il turno" onPress={onResume} icon={Play} />
-              <Button title="Concludi questo turno" onPress={onEndTurn} secondary icon={Flag} />
+              <Button title={t('Riprendi il turno')} onPress={onResume} icon={Play} />
+              <Button
+                title={t('Concludi questo turno')}
+                onPress={onEndTurn}
+                secondary
+                icon={Flag}
+              />
               <Pressable accessibilityRole="button" onPress={onHome} style={{ padding: 10 }}>
-                <Txt style={{ color: C.muted, fontSize: 13 }}>Salva ed esci alla home</Txt>
+                <Txt style={{ color: C.muted, fontSize: 13 }}>{t('Salva ed esci alla home')}</Txt>
               </Pressable>
             </View>
           )}
@@ -559,6 +583,7 @@ export function Match({
   );
 }
 function Timer({ remaining, total }: { remaining: number; total: number }) {
+  const { t } = useI18n();
   const urgent = remaining <= 10000;
   const color = urgent ? C.coral : C.orange;
   const radius = 24;
@@ -589,9 +614,9 @@ function Timer({ remaining, total }: { remaining: number; total: number }) {
         </Txt>
       </View>
       <View>
-        <SectionLabel style={{ fontSize: 9 }}>IL TEMPO VOLA</SectionLabel>
+        <SectionLabel style={{ fontSize: 9 }}>{t('IL TEMPO VOLA')}</SectionLabel>
         <Txt style={{ color, fontFamily: FONT.medium, fontSize: 12, marginTop: 4 }}>
-          {urgent ? 'Ultime parole!' : 'Pensa in fretta.'}
+          {urgent ? t('Ultime parole!') : t('Pensa in fretta.')}
         </Txt>
       </View>
     </View>

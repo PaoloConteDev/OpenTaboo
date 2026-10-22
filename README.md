@@ -1,134 +1,191 @@
 # Open Taboo
 
-Un party game in italiano per Android, realizzato con **Expo SDK 58, React Native 0.88, React 19.3 e TypeScript**. Progetto universitario indipendente, con grafica, icona, carte e suoni originali.
+**Think. Talk. Dare.**
 
-## Avvio rapido
+An offline Android party game inspired by Taboo, featuring **5 languages**, **1,800 cards per language**, and **2–4 teams**. Built with Expo, React Native, and TypeScript.
 
-Richiede Node.js **22.13+ sulla linea 22, 24.3+ sulla linea 24, oppure 26+**, e npm. La prima installazione richiede Internet.
+An independent project by **Gleetch**.
+
+<p align="center">
+  <img src="docs/preview-language-button.png" width="400" alt="Open Taboo home screen with the selected language flag in the header" />
+  <img src="docs/preview-languages.png" width="400" alt="Language selector with Italian, English, Spanish, German, and French flags" />
+</p>
+
+## Install on Android
+
+1. Download the `.apk` file provided in this repository to your Android phone.
+2. Open the downloaded file and follow the Android installation prompts.
+3. Launch **Open Taboo** and start playing.
+
+The APK runs on its own: no Expo Go, account, or computer is required. After installation, the game works offline.
+
+To keep your saved matches and preferences when updating, install the new APK over the existing app and choose **Update** when prompted. Keep the current app installed.
+
+## Features
+
+- **Play offline:** cards, translations, fonts, icons, and sound effects are bundled with the app.
+- **2–4 teams:** customize team names and play together on one phone.
+- **Five languages:** Italian, English, Spanish, German, and French for menus, rules, decks, and cards.
+- **1,800 cards in each language:** six mixable decks with 300 cards each. Every card has one target word and five forbidden words.
+- **Configurable matches:** choose the timer, number of rounds, penalties, and skip limit.
+- **Turn review:** correct card outcomes before confirming the score.
+- **Local progress:** resume a saved match and browse the last 20 completed games.
+- **Pause and resume:** the timer pauses when the app goes into the background, and the card stays hidden until play resumes.
+- **Animated interface:** purple, coral, and orange styling, rounded cards, local sound effects, and optional haptic feedback.
+- **No account, ads, tracking, or gameplay server.**
+
+## How to play
+
+1. Create two, three, or four teams and choose your decks and match settings.
+2. Pass the phone to the clue-giver. An opponent checks the forbidden words.
+3. Describe the target word without saying it or any of its five forbidden words. No word fragments, translations, gestures, or rhyming clues.
+4. Tap **Got it!** for a correct answer, **Taboo!** for a forbidden word, or **Skip** to move on.
+5. When the timer ends, review the results and confirm the turn. Pass the phone to the next team.
+
+Each team plays once per round. The highest score wins after the final round; tied teams share the victory.
+
+| Setting        | Available options              |
+| -------------- | ------------------------------ |
+| Teams          | 2, 3, or 4                     |
+| Time per turn  | 30, 45, 60, 90, or 120 seconds |
+| Rounds         | 1, 3, 5, or 7                  |
+| Correct answer | +1 point                       |
+| Taboo penalty  | 0, −1, or −2 points            |
+| Skips per turn | 0, 3, 5, or unlimited          |
+| Skip penalty   | 0 or −1 point                  |
+
+Scores can be negative. Cards are shuffled and do not repeat until the selected deck pool is exhausted. An unresolved card at the end of a turn is discarded without a penalty before the next team plays.
+
+## Languages and decks
+
+The first launch uses the device language, including regional variants such as `fr-CA`. Unsupported languages fall back to **English**. A manually selected language is saved locally and takes priority on later launches.
+
+Tap the **flag button to the left of the trophy** to change language. The button shows the active language's flag. Changing language during a live turn pauses the timer and hides the card; team names, scores, and match progress are preserved.
+
+| Deck                  | Cards per language |
+| --------------------- | -----------------: |
+| The classics          |                300 |
+| Everyday life         |                300 |
+| A wild world          |                300 |
+| Lights, camera, play! |                300 |
+| Around the world      |                300 |
+| Outside the box       |                300 |
+| **Total**             |          **1,800** |
+
+The five languages provide **9,000 localized card versions** of the same 1,800 base cards. Translations were prepared using local models and editorial corrections; specialized vocabulary may benefit from further language review.
+
+## Run the source (optional)
+
+### Requirements
+
+- Node.js **22.13+ on the 22.x release line**, **24.3+ on the 24.x release line**, or **26+**.
+- npm.
+- For Android development: a compatible Expo Go client or an Android emulator/development build.
+
+### Install and run
+
+From the project directory:
 
 ```sh
 npm ci
 npm start
 ```
 
-Le dipendenze sono già installate nella cartella di lavoro consegnata: qui puoi eseguire direttamente `npm start`. Usa `npm ci` dopo aver estratto l’archivio su un altro computer.
+- **Android:** scan the QR code with an Expo Go version compatible with **SDK 58**, or press `a` with an Android emulator running. The phone must be able to reach the Metro development server.
+- **Web:** press `w`, or run `npm run web`.
+- **Different development port:** run `npm start -- --port 8082`.
 
-- **Android:** apri il QR con una versione di **Expo Go compatibile con SDK 58**; oppure premi `a` con un emulatore Android già avviato. Computer e telefono devono raggiungere il server Metro sulla stessa rete.
-- **Browser:** esegui `npm run web` oppure premi `w` nella CLI.
-- **Porta occupata:** `npm start -- --port 8082`.
+If your installed Expo Go version does not support SDK 58, use a compatible client from [expo.dev/go](https://expo.dev/go). To play without a development environment, install the APK provided in this repository.
 
-### Compatibilità Expo Go al 22 ottobre 2026
+On Windows PowerShell, use `npm.cmd` or `npx.cmd` if script execution policy prevents running the corresponding `.ps1` wrappers.
 
-SDK 58 è stato pubblicato il 15 ottobre 2026. Le [note ufficiali di Expo](https://expo.dev/changelog/sdk-58) segnalano che Expo Go per SDK 58 arriverà negli store nelle settimane successive. Se il client installato segnala un’incompatibilità, verifica la disponibilità della versione Android corretta su [expo.dev/go](https://expo.dev/go), oppure genera l’APK autonomo con il profilo `preview` descritto sotto. Il progetto usa SDK 58 stabile, senza pacchetti beta.
-
-## Funzioni incluse
-
-- **2–4 squadre**, con nomi modificabili fino a 20 caratteri e un colore per squadra.
-- Timer da **30, 45, 60, 90 o 120 secondi**, preceduto da un conto alla rovescia.
-- **1, 3, 5 o 7 round**; in ogni round tutte le squadre giocano una volta.
-- **1.800 carte italiane originali**, ognuna con parola principale e **5 parole vietate**.
-- Sei mazzi da **300 carte ciascuno**, combinabili: Il grande classico, Vita quotidiana, Un mondo selvaggio, Ciak si gioca, In giro per il mondo, Fuori dagli schemi.
-- Indovinata **+1**; penalità Taboo di **0, −1 o −2**; penalità passaggio di **0 o −1**.
-- Passaggi per turno: **0, 3, 5 o illimitati**.
-- Mazzo mescolato con Fisher–Yates: nessuna ripetizione prima dell’esaurimento. Alla fine viene rimescolato. La carta rimasta scoperta a fine turno viene scartata prima della squadra successiva.
-- Riepilogo delle carte con **correzione degli esiti prima della conferma** del punteggio.
-- Classifica finale, vittorie a pari merito e rivincita con le stesse regole.
-- Pausa manuale, **pausa automatica in background**, ripristino della partita con carta nascosta e tempo residuo conservato.
-- Salvataggio di preferenze, partita e ultime **20 partite** sul dispositivo tramite AsyncStorage.
-- I salvataggi con i vecchi mazzi da 40 carte vengono estesi automaticamente, conservando carta corrente, tempo, esiti e punteggi.
-- Animazioni delle carte, **5 suoni originali locali**, vibrazione opzionale e schermo mantenuto acceso durante il turno.
-- Interfaccia adattiva per telefono, tablet e browser; viola, corallo, arancione e carte arrotondate.
-- Regole, selezione dei mazzi e impostazioni integrate. Nessun account, annuncio o servizio remoto di gioco.
-
-## Offline: sviluppo e app installata
-
-Carte, caratteri Outfit, icone e suoni sono inclusi nel bundle: il gioco non chiama API e non scarica contenuti durante la partita.
-
-**Un APK installato funziona interamente offline**, anche dal primo avvio. La sessione di sviluppo con Expo Go usa Metro e richiede invece il collegamento al computer per caricare il codice. `npx expo start --offline` evita i controlli Internet della CLI, ma non elimina il collegamento locale a Metro.
-
-La versione web è un’anteprima funzionale. Non include un service worker per l’avvio offline a browser chiuso; il requisito offline è implementato nell’app Android installata.
-
-## Generare un APK Android
-
-Il file `eas.json` include un profilo `preview` per un APK installabile senza Expo Go e un profilo `production` per un Android App Bundle.
+### Preview the production web build
 
 ```sh
-npx eas-cli@latest login
-npx eas-cli@latest build:configure
-npx eas-cli@latest build --platform android --profile preview
-```
-
-EAS richiede un account Expo e Internet per la compilazione. Al termine scarica l’APK dal link restituito da EAS e installalo sul telefono. La build non è stata inviata a EAS durante la preparazione del progetto.
-
-Per lo sviluppo nativo locale, con Android Studio, JDK e Android SDK configurati:
-
-```sh
-npx expo run:android
-```
-
-Gli identificativi predefiniti sono `it.university.opentaboo` per Android e iOS. Puoi modificarli in `app.json` prima di distribuire l’app.
-
-## Verifiche e anteprima
-
-```sh
-npm run typecheck
-npm test
-npm run cards:check
-npx expo-doctor
-npm run export:android
 npm run export:web
 npm run preview
 ```
 
-`npm run preview` serve l’esportazione web su [localhost:4173](http://localhost:4173); [localhost:4173/__mobile](http://localhost:4173/__mobile) la mostra in una cornice da telefono di 390 pixel. Il server è limitato all’interfaccia locale.
+Open [localhost:4173](http://localhost:4173). The [phone preview](http://localhost:4173/__mobile) displays the app in a 390-pixel-wide frame. The preview server listens only on the local machine.
 
-I test verificano integrità del database, mescolamento, regole di punteggio, limiti dei passaggi, blocco degli input a timer scaduto, equità dei turni con 2–4 squadre, fine partita, correzioni, scarto della carta rimasta e ripristino sicuro dei salvataggi.
+## Offline behavior and privacy
 
-L’esportazione Android verifica JavaScript, asset e compilazione Hermes: **non equivale alla compilazione di un APK o a un collaudo su dispositivo fisico**.
+An installed Android APK works offline from its first launch. The app does not download card packs, call translation services, or require a gameplay backend. Preferences, the current match, and match history are stored on the device using AsyncStorage.
 
-Per formattare i sorgenti: `npm run format`. Per rigenerare icone e suoni: `npm run assets`. Gli asset generati sono già presenti e non serve rigenerarli per avviare l’app.
+The app does not record speech or require microphone access. Another player checks the forbidden words. The Android configuration also excludes overlay and external-storage permissions.
 
-## Struttura
+Development with Expo Go still requires access to the Metro server. The web version is a functional preview and does not include a service worker for offline cold starts.
+
+## Development and checks
+
+| Command                | Purpose                                             |
+| ---------------------- | --------------------------------------------------- |
+| `npm start`            | Start the Expo development server                   |
+| `npm run android`      | Start Expo for Android development                  |
+| `npm run web`          | Start the web development preview                   |
+| `npm run typecheck`    | Check TypeScript types                              |
+| `npm test`             | Run the game engine and localization tests          |
+| `npm run cards:check`  | Check the Italian card expansion files              |
+| `npm run export:web`   | Generate the production web build                   |
+| `npm run preview`      | Serve the exported web build locally                |
+| `npm run format`       | Format source files and documentation               |
+| `npm run format:check` | Check formatting                                    |
+| `npm run assets`       | Regenerate the included app icons and sound effects |
+
+The 24 automated tests cover scoring, skip limits, turn order, equal turns for all team counts, end-of-match behavior, saved-game recovery, device-language fallback, message interpolation, and card integrity across all five languages. Saved games from the original 40-card decks are expanded without losing the current card or progress.
+
+## Project structure
 
 ```text
-App.tsx                     Navigazione, timer, ciclo di vita e coordinamento della partita
+App.tsx                       Navigation, timer, app lifecycle, and match coordination
 src/
-  components/UI.tsx         Componenti visivi, carte e animazioni
-  screens/Lobby.tsx         Home, mazzi e regole
-  screens/Setup.tsx         Squadre e configurazione
-  screens/Match.tsx         Turno, pausa, riepilogo e classifica
-  game/engine.ts            Logica pura, separata dall’interfaccia
-  data/cards.ts             Metadati, carte iniziali e assemblaggio del database
-  data/expansion/           Altre 260 carte originali per ciascuno dei sei mazzi
-  hooks/useFeedback.ts      Audio e feedback tattile
-  storage.ts                Persistenza serializzata e ripristino
-  theme.ts                  Palette e tipografia
-assets/                     Icone e cinque effetti WAV
-scripts/                    Generazione asset e anteprima locale
-tests/engine.test.ts        Test automatici della logica
-app.json                    Configurazione Expo e permessi
-eas.json                    Profili APK e App Bundle
-package-lock.json           Versioni riproducibili delle dipendenze
+  components/                 Shared UI, animated cards, and vector language flags
+  screens/                    Home, decks, rules, setup, match, and results
+  game/engine.ts              Pure game logic and saved-game recovery
+  data/cards.ts               Deck metadata and base Italian cards
+  data/expansion/             Additional Italian cards for each deck
+  data/locales/               Bundled English, Spanish, German, and French cards
+  data/localizedCards.ts      Card lookup with stable IDs across languages
+  i18n/                       Interface translations and language preference
+  hooks/useFeedback.ts        Local audio and haptic feedback
+  storage.ts                  Local persistence
+  theme.ts                    Colors and typography
+assets/                       App icons and five WAV sound effects
+scripts/                      Asset generation, card checks, and preview server
+tests/                        Game engine and localization tests
+docs/                         Screenshots, validation notes, and translation guide
+app.json                      Expo configuration and Android permissions
 ```
 
-## Personalizzare le carte
+## Customize cards and translations
 
-Le prime 40 carte di ciascun mazzo si trovano in `src/data/cards.ts`; le altre 260 nei sei file `src/data/expansion/`. Le carte iniziali mantengono gli identificativi della prima versione. Ogni riga contiene sei elementi separati da `|`:
+The first 40 Italian cards of each deck are in `src/data/cards.ts`; the remaining 260 are in `src/data/expansion/`. Each row contains the target word followed by exactly five forbidden words:
 
 ```text
 Pizza|Forno|Mozzarella|Pomodoro|Margherita|Napoli
 ```
 
-Il primo elemento è la parola da indovinare; gli altri cinque sono vietati. Le 1.800 parole principali sono distinte in tutto il database. `npm run cards:check` controlla i file aggiuntivi, i duplicati e le cinque parole vietate; i test verificano anche le carte iniziali e la migrazione dei salvataggi. Per ampliare ulteriormente il database aggiorna i conteggi attesi nei controlli. I conteggi nell’interfaccia sono derivati dai dati.
+Other languages use JSON files in `src/data/locales/`. Each card ID maps to an array containing the target word and its five forbidden words. Keep IDs stable because saved matches use them. When adding cards, update all language files and the expected counts in the tests.
 
-## Regole e scelte tecniche
+Interface text lives in `src/i18n/messages.ts`, with columns for Italian, English, Spanish, German, and French. Dynamic values use placeholders such as `{{0}}`.
 
-Il conteggio usa una scadenza assoluta (`Date.now()`), evitando che il timer rallenti quando un intervallo JavaScript arriva in ritardo. Anche il gestore dei pulsanti controlla la scadenza prima di assegnare un esito. Il punteggio può diventare negativo. Le scritture su storage sono serializzate per preservarne l’ordine; il timer viene salvato circa una volta al secondo e immediatamente al passaggio in background. In caso di chiusura forzata resta quindi possibile una differenza di circa un secondo rispetto all’ultimo fotogramma.
+See the [translation guide](docs/TRANSLATIONS.md) and [validation notes](docs/VALIDATION.md) for more implementation details. These supporting documents are currently in Italian.
 
-Il controllo delle parole vietate è affidato a una persona, come nel gioco da tavolo. L’app non registra e non richiede il microfono. La carta non risolta alla scadenza non assegna penalità. Gli esiti modificati nel riepilogo valgono per il punteggio definitivo del turno.
+## Contributing
 
-## Riferimento e attribuzioni
+Bug reports, language corrections, and card improvements are welcome. For translation changes, include the language and card ID. Before submitting a code or data change, run:
 
-Direzione visiva ispirata alla [pagina Google Play di Taboo di Marmalade Game Studio](https://play.google.com/store/apps/details?id=com.marmalade.taboo&hl=it). Open Taboo è un’interpretazione didattica autonoma: non usa loghi, fotografie, schermate, suoni o database estratti dall’app ufficiale e non è affiliata a Hasbro o Marmalade Game Studio.
+```sh
+npm run typecheck
+npm test
+npm run cards:check
+npm run format:check
+```
 
-Il carattere **Outfit** è distribuito sotto SIL Open Font License; le icone **Lucide** sotto licenza ISC. Le rispettive licenze sono incluse nei pacchetti npm. Vedi `THIRD_PARTY_NOTICES.md` per i riferimenti.
+## Credits and licensing
+
+Created by **Gleetch**. Built with Expo, React Native, React, and TypeScript. The interface uses **Outfit** fonts and **Lucide** icons; fonts, dependencies, and other third-party components retain their respective licenses. See [third-party notices](THIRD_PARTY_NOTICES.md).
+
+This repository does not currently include a project-wide `LICENSE` file. A project license should be added before offering the original code under specific open-source terms.
+
+Open Taboo is an independent project inspired by the word game Taboo and the [Marmalade Game Studio app](https://play.google.com/store/apps/details?id=com.marmalade.taboo). It is not affiliated with or endorsed by Hasbro or Marmalade Game Studio. The project does not include logos, screenshots, sounds, or card databases extracted from the official app. Third-party trademarks remain the property of their respective owners.

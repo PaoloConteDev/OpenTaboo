@@ -2,6 +2,7 @@ node_modules/
 .expo/
 dist/
 dist-android/
+artifacts/
 web-build/
 *.tsbuildinfo
 *.log

@@ -1,3 +1,4 @@
+import { useI18n } from '../i18n/LanguageProvider';
 import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import {
   ArrowRight,
@@ -14,6 +15,7 @@ import {
   Zap,
 } from 'lucide-react-native';
 import { CARDS, DECKS, DeckId } from '../data/cards';
+import { LANGUAGES } from '../i18n';
 import { Game, Settings } from '../game/engine';
 import { C, FONT } from '../theme';
 import {
@@ -42,32 +44,38 @@ export function Home({
   game: Game | null;
   settings: Settings;
 }) {
+  const { t } = useI18n();
   const { width } = useWindowDimensions();
   const mobile = width < 760;
   return (
     <View>
       <View style={[s.hero, mobile && { flexDirection: 'column', paddingTop: 28, gap: 0 }]}>
         <View style={[s.heroCopy, mobile && { width: '100%' }]}>
-          <Pill>IL PARTY GAME, OVUNQUE TU SIA</Pill>
+          <Pill>{t('IL PARTY GAME, OVUNQUE TU SIA')}</Pill>
           <Txt
             accessibilityRole="header"
             style={[s.headline, mobile && { fontSize: 47, lineHeight: 51, marginTop: 24 }]}
           >
-            Tutto si può{'\n'}dire.{' '}
+            {t('Tutto si può')}
+            {'\n'}
+            {t('dire.')}{' '}
             <Txt
               style={[s.headline, { color: C.coral }, mobile && { fontSize: 47, lineHeight: 51 }]}
             >
-              O quasi.
+              {t('O quasi.')}
             </Txt>
           </Txt>
           <Txt style={[s.heroSub, mobile && { fontSize: 16, lineHeight: 25 }]}>
-            Una parola da indovinare. Cinque da evitare.{'\n'}E i tuoi amici che non ti renderanno
-            la vita facile.
+            {t('Una parola da indovinare. Cinque da evitare.')}
+            {'\n'}
+            {t('E i tuoi amici che non ti renderanno la vita facile.')}
           </Txt>
           <View style={{ gap: 12, alignSelf: mobile ? 'stretch' : 'flex-start', marginTop: 28 }}>
             <Button
               title={
-                game && game.phase !== 'finished' ? 'Riprendi la partita' : 'Che il gioco inizi'
+                game && game.phase !== 'finished'
+                  ? t('Riprendi la partita')
+                  : t('Che il gioco inizi')
               }
               onPress={game && game.phase !== 'finished' ? onResume : onStart}
               icon={Play}
@@ -75,7 +83,7 @@ export function Home({
             {game && game.phase !== 'finished' && (
               <Pressable accessibilityRole="button" onPress={onStart} style={{ padding: 8 }}>
                 <Txt style={{ color: C.muted, textAlign: 'center', fontSize: 13 }}>
-                  oppure crea una nuova partita
+                  {t('oppure crea una nuova partita')}
                 </Txt>
               </Pressable>
             )}
@@ -83,15 +91,15 @@ export function Home({
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 17, marginTop: 22 }}>
             <View style={s.inline}>
               <Users size={15} color={C.muted} />
-              <Txt style={s.micro}>2–4 squadre</Txt>
+              <Txt style={s.micro}>{t('2–4 squadre')}</Txt>
             </View>
             <View style={s.smallDot} />
             <View style={s.inline}>
               <WifiOff size={15} color={C.muted} />
-              <Txt style={s.micro}>100% offline</Txt>
+              <Txt style={s.micro}>{t('100% offline')}</Txt>
             </View>
             <View style={s.smallDot} />
-            <Txt style={s.micro}>100% risate</Txt>
+            <Txt style={s.micro}>{t('100% risate')}</Txt>
           </View>
         </View>
         <View
@@ -109,14 +117,26 @@ export function Home({
           <View style={s.spark}>
             <Zap size={24} color={C.orange} fill={C.orange} />
           </View>
-          <Txt style={s.handNote}>Le parole giuste?{'\n'}Trovale tu.</Txt>
+          <Txt style={s.handNote}>
+            {t('Le parole giuste?')}
+            {'\n'}
+            {t('Trovale tu.')}
+          </Txt>
         </View>
       </View>
       <View style={s.featureStrip}>
         {[
-          { icon: Layers3, title: `${CARDS.length} carte originali`, sub: 'Tutte in italiano' },
-          { icon: Users, title: 'Amici, divano e via', sub: 'Un solo telefono per tutti' },
-          { icon: ShieldCheck, title: 'Zero distrazioni', sub: 'Niente account o pubblicità' },
+          {
+            icon: Layers3,
+            title: t('{{0}} carte originali', CARDS.length),
+            sub: t('5 lingue, tutte offline'),
+          },
+          { icon: Users, title: t('Amici, divano e via'), sub: t('Un solo telefono per tutti') },
+          {
+            icon: ShieldCheck,
+            title: t('Zero distrazioni'),
+            sub: t('Niente account o pubblicità'),
+          },
         ].map(({ icon: Icon, title, sub }) => (
           <View key={title} style={[s.feature, mobile && { minWidth: 150, flexBasis: '45%' }]}>
             <View style={s.featureIcon}>
@@ -132,11 +152,11 @@ export function Home({
       <View style={{ marginTop: 39 }}>
         <View style={s.sectionRow}>
           <View>
-            <SectionLabel>LA SERATA COMINCIA QUI</SectionLabel>
-            <Txt style={s.sectionTitle}>Poche regole. Tante risate.</Txt>
+            <SectionLabel>{t('LA SERATA COMINCIA QUI')}</SectionLabel>
+            <Txt style={s.sectionTitle}>{t('Poche regole. Tante risate.')}</Txt>
           </View>
           <Pressable accessibilityRole="button" onPress={onRules} style={s.textLink}>
-            <Txt style={s.textLinkText}>Come si gioca</Txt>
+            <Txt style={s.textLinkText}>{t('Come si gioca')}</Txt>
             <ArrowRight size={16} color={C.purple} />
           </Pressable>
         </View>
@@ -152,18 +172,23 @@ export function Home({
             <View style={{ flex: 1, gap: 11 }}>
               <View style={s.inline}>
                 <Zap size={14} color={C.orange} fill={C.orange} />
-                <SectionLabel style={{ color: C.orange }}>LA TUA PROSSIMA PARTITA</SectionLabel>
+                <SectionLabel style={{ color: C.orange }}>
+                  {t('LA TUA PROSSIMA PARTITA')}
+                </SectionLabel>
               </View>
-              <Txt style={{ fontFamily: FONT.semibold, fontSize: 23 }}>Raduna la tua squadra.</Txt>
+              <Txt style={{ fontFamily: FONT.semibold, fontSize: 23 }}>
+                {t('Raduna la tua squadra.')}
+              </Txt>
               <Txt style={{ color: C.muted, fontSize: 14, lineHeight: 21 }}>
-                Scegli i nomi, imposta il timer e lascia{!mobile ? '\n' : ' '}che siano le parole a
-                fare il resto.
+                {t('Scegli i nomi, imposta il timer e lascia')}
+                {!mobile ? '\n' : ' '}
+                {t('che siano le parole a fare il resto.')}
               </Txt>
               <View style={[s.inline, { marginTop: 7, gap: 8 }]}>
                 {[
-                  `${settings.teamCount} squadre`,
-                  `${settings.seconds} secondi`,
-                  `${settings.rounds} round`,
+                  t('{{0}} squadre', settings.teamCount),
+                  t('{{0}} secondi', settings.seconds),
+                  t('{{0}} round', settings.rounds),
                 ].map((t) => (
                   <View key={t} style={s.miniChip}>
                     <Txt style={{ color: '#D6C5E5', fontSize: 11 }}>{t}</Txt>
@@ -184,14 +209,18 @@ export function Home({
             ]}
           >
             <View style={{ flex: 1, gap: 10 }}>
-              <SectionLabel style={{ color: C.coral }}>UN MAZZO PER OGNI MOOD</SectionLabel>
-              <Txt style={{ fontFamily: FONT.semibold, fontSize: 23 }}>Non le solite parole.</Txt>
+              <SectionLabel style={{ color: C.coral }}>{t('UN MAZZO PER OGNI MOOD')}</SectionLabel>
+              <Txt style={{ fontFamily: FONT.semibold, fontSize: 23 }}>
+                {t('Non le solite parole.')}
+              </Txt>
               <Txt style={{ color: C.muted, fontSize: 14, lineHeight: 21 }}>
-                Dal grande classico alle sfide{'\n'}fuori dagli schemi. Scoprili tutti.
+                {t('Dal grande classico alle sfide')}
+                {'\n'}
+                {t('fuori dagli schemi. Scoprili tutti.')}
               </Txt>
               <View style={[s.inline, { marginTop: 6 }]}>
                 <Txt style={{ fontSize: 13, color: C.coral, fontFamily: FONT.medium }}>
-                  Esplora i 6 mazzi
+                  {t('Esplora i 6 mazzi')}
                 </Txt>
                 <ArrowRight size={15} color={C.coral} />
               </View>
@@ -220,7 +249,7 @@ export function Home({
       <View style={s.loveNote}>
         <Heart size={12} color={C.muted} />
         <Txt style={{ color: C.muted, fontSize: 11 }}>
-          Fatto per stare insieme. Anche senza connessione.
+          {t('Fatto per stare insieme. Anche senza connessione.')}
         </Txt>
       </View>
     </View>
@@ -236,13 +265,14 @@ export function Decks({
   onToggle: (id: DeckId) => void;
   onStart: () => void;
 }) {
+  const { t, language } = useI18n();
   const { width } = useWindowDimensions();
   return (
     <View style={{ paddingTop: 32 }}>
       <SectionHeading
-        eyebrow="SCEGLI LE TUE PAROLE"
-        title="Un mazzo, mille storie."
-        subtitle="Mescola i tuoi preferiti. Tutte le carte sono incluse, tutte offline."
+        eyebrow={t('SCEGLI LE TUE PAROLE')}
+        title={t('Un mazzo, mille storie.')}
+        subtitle={t('Mescola i tuoi preferiti. Tutte le carte sono incluse, tutte offline.')}
       />
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 18 }}>
         {DECKS.map((deck) => {
@@ -253,7 +283,7 @@ export function Decks({
               key={deck.id}
               accessibilityRole="checkbox"
               accessibilityState={{ checked }}
-              accessibilityLabel={deck.name}
+              accessibilityLabel={t(deck.name)}
               onPress={() => onToggle(deck.id)}
               style={({ pressed }) => ({
                 width: width < 700 ? '100%' : '31.8%',
@@ -320,12 +350,16 @@ export function Decks({
                 </View>
               </View>
               <View style={{ padding: 20, gap: 7, backgroundColor: C.panel }}>
-                <Txt style={{ fontFamily: FONT.semibold, fontSize: 21 }}>{deck.name}</Txt>
-                <Txt style={{ color: C.muted, fontSize: 13 }}>{deck.subtitle}</Txt>
+                <Txt style={{ fontFamily: FONT.semibold, fontSize: 21 }}>{t(deck.name)}</Txt>
+                <Txt style={{ color: C.muted, fontSize: 13 }}>{t(deck.subtitle)}</Txt>
                 <Txt
                   style={{ color: deck.color, fontSize: 11, fontFamily: FONT.medium, marginTop: 8 }}
                 >
-                  {CARDS.filter((c) => c.deck === deck.id).length} CARTE · ITALIANO
+                  {t(
+                    '{{0}} CARTE · {{1}}',
+                    CARDS.filter((c) => c.deck === deck.id).length,
+                    LANGUAGES.find((item) => item.id === language)!.name.toLocaleUpperCase(),
+                  )}
                 </Txt>
               </View>
             </Pressable>
@@ -343,39 +377,49 @@ export function Decks({
         }}
       >
         <Txt style={{ color: C.muted }}>
-          {selected.length} {selected.length === 1 ? 'mazzo selezionato' : 'mazzi selezionati'} ·{' '}
-          {CARDS.filter((c) => selected.includes(c.deck)).length} carte
+          {selected.length}{' '}
+          {selected.length === 1 ? t('mazzo selezionato') : t('mazzi selezionati')} ·{' '}
+          {CARDS.filter((c) => selected.includes(c.deck)).length} {t('carte')}
         </Txt>
-        <Button title="Gioca con questi mazzi" onPress={onStart} />
+        <Button title={t('Gioca con questi mazzi')} onPress={onStart} />
       </View>
     </View>
   );
 }
 
 export function Rules({ onStart }: { onStart: () => void }) {
+  const { t } = useI18n();
   const { width } = useWindowDimensions();
   const steps = [
     {
-      title: 'Amici, fate squadra.',
-      text: 'Dividetevi in 2, 3 o 4 squadre. Scegliete chi descrive per primo e affidate a un avversario il controllo delle parole vietate.',
+      title: t('Amici, fate squadra.'),
+      text: t(
+        'Dividetevi in 2, 3 o 4 squadre. Scegliete chi descrive per primo e affidate a un avversario il controllo delle parole vietate.',
+      ),
       icon: Users,
       color: C.coral,
     },
     {
-      title: 'Descrivi l’indescrivibile.',
-      text: 'Fai indovinare la parola in cima alla carta senza pronunciarla e senza usare nessuna delle cinque parole vietate. Niente parti della parola, traduzioni, gesti o suggerimenti in rima.',
+      title: t('Descrivi l’indescrivibile.'),
+      text: t(
+        'Fai indovinare la parola in cima alla carta senza pronunciarla e senza usare nessuna delle cinque parole vietate. Niente parti della parola, traduzioni, gesti o suggerimenti in rima.',
+      ),
       icon: BookOpen,
       color: C.orange,
     },
     {
-      title: 'Il tempo corre. Tu parla!',
-      text: 'Premi “Indovinata” per guadagnare un punto, “Taboo!” se scappa una parola vietata, oppure “Passa” se sei in difficoltà. Il timer, le penalità e i passaggi li decidete voi.',
+      title: t('Il tempo corre. Tu parla!'),
+      text: t(
+        'Premi “Indovinata” per guadagnare un punto, “Taboo!” se scappa una parola vietata, oppure “Passa” se sei in difficoltà. Il timer, le penalità e i passaggi li decidete voi.',
+      ),
       icon: Clock3,
       color: C.mint,
     },
     {
-      title: 'Il prossimo turno è vostro.',
-      text: 'Allo scadere, controllate le carte e correggete eventuali errori prima di confermare. Passate il telefono alla squadra successiva e alternate chi descrive. Dopo l’ultimo round vince chi ha più punti; i pari merito condividono la vittoria.',
+      title: t('Il prossimo turno è vostro.'),
+      text: t(
+        'Allo scadere, controllate le carte e correggete eventuali errori prima di confermare. Passate il telefono alla squadra successiva e alternate chi descrive. Dopo l’ultimo round vince chi ha più punti; i pari merito condividono la vittoria.',
+      ),
       icon: Trophy,
       color: C.purple,
     },
@@ -383,9 +427,9 @@ export function Rules({ onStart }: { onStart: () => void }) {
   return (
     <View style={{ paddingTop: 32, maxWidth: 900, alignSelf: 'center', width: '100%' }}>
       <SectionHeading
-        eyebrow="SI IMPARA IN UN MINUTO"
-        title="La parola a voi."
-        subtitle="Un solo telefono. Tutti intorno. E nessuna parola di troppo."
+        eyebrow={t('SI IMPARA IN UN MINUTO')}
+        title={t('La parola a voi.')}
+        subtitle={t('Un solo telefono. Tutti intorno. E nessuna parola di troppo.')}
       />
       <View style={{ gap: 16 }}>
         {steps.map((step, i) => (
@@ -420,7 +464,7 @@ export function Rules({ onStart }: { onStart: () => void }) {
         ))}
       </View>
       <Button
-        title="Tutto chiaro. Giochiamo!"
+        title={t('Tutto chiaro. Giochiamo!')}
         onPress={onStart}
         style={{ marginTop: 24, alignSelf: 'center' }}
       />

@@ -9,5 +9,5 @@
     "types": ["react", "node"]
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", "dist", "dist-android"]
+  "exclude": ["node_modules", "dist", "dist-android", "artifacts"]
 }

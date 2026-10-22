@@ -19,4 +19,6 @@ Il progetto utilizza software di terze parti con le rispettive licenze:
 
 Le licenze del font e delle icone sono incluse anche in `docs/licenses/`. Le altre licenze complete sono conservate nei pacchetti delle dipendenze installate con `npm ci`. Le dipendenze di sviluppo conservano a loro volta le licenze dei rispettivi autori.
 
-Taboo è il nome del gioco di riferimento. Questo progetto universitario è indipendente e non rivendica diritti sui marchi di Hasbro o Marmalade Game Studio.
+Taboo è il nome del gioco di riferimento. Questo progetto è indipendente e non rivendica diritti sui marchi di Hasbro o Marmalade Game Studio.
+
+Le traduzioni delle carte sono state preparate offline con modelli Argos Translate derivati da OPUS-MT, con correzioni dei termini e adattamenti delle carte. I modelli e gli strumenti Python non sono inclusi nell’app o nell’archivio del progetto. Riferimenti: Argos Open Technologies (https://github.com/argosopentech/argos-translate); Jörg Tiedemann e Santhosh Thottingal, “OPUS-MT — Building open translation services for the World”, EAMT 2020 (https://aclanthology.org/2020.eamt-1.61/). I modelli OPUS originali indicano la licenza CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).

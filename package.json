@@ -14,8 +14,8 @@
     "export:android": "expo export --platform android --output-dir dist-android",
     "assets": "node scripts/create-assets.mjs",
     "preview": "node scripts/serve-web.mjs",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "prettier --write \"*.{ts,tsx,json,md}\" \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.{ts,mjs}\" \"tests/**/*.ts\" \"docs/**/*.md\"",
+    "format:check": "prettier --check \"*.{ts,tsx,json,md}\" \"src/**/*.{ts,tsx,json}\" \"scripts/**/*.{ts,mjs}\" \"tests/**/*.ts\" \"docs/**/*.md\""
   },
   "dependencies": {
     "@expo-google-fonts/outfit": "^0.4.3",
