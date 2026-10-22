@@ -11,6 +11,16 @@ An independent project by **Gleetch**.
   <img src="docs/preview-languages.png" width="400" alt="Language selector with Italian, English, Spanish, German, and French flags" />
 </p>
 
+## Install on Android
+
+1. Download the `.apk` file provided in this repository to your Android phone.
+2. Open the downloaded file and follow the Android installation prompts.
+3. Launch **Open Taboo** and start playing.
+
+The APK runs on its own: no Expo Go, account, or computer is required. After installation, the game works offline.
+
+To keep your saved matches and preferences when updating, install the new APK over the existing app and choose **Update** when prompted. Keep the current app installed.
+
 ## Features
 
 - **Play offline:** cards, translations, fonts, icons, and sound effects are bundled with the app.
@@ -64,7 +74,7 @@ Tap the **flag button to the left of the trophy** to change language. The button
 
 The five languages provide **9,000 localized card versions** of the same 1,800 base cards. Translations were prepared using local models and editorial corrections; specialized vocabulary may benefit from further language review.
 
-## Getting started
+## Run the source (optional)
 
 ### Requirements
 
@@ -85,7 +95,7 @@ npm start
 - **Web:** press `w`, or run `npm run web`.
 - **Different development port:** run `npm start -- --port 8082`.
 
-If your installed Expo Go version does not support SDK 58, use a compatible client from [expo.dev/go](https://expo.dev/go), or build the standalone APK below.
+If your installed Expo Go version does not support SDK 58, use a compatible client from [expo.dev/go](https://expo.dev/go). To play without a development environment, install the APK provided in this repository.
 
 On Windows PowerShell, use `npm.cmd` or `npx.cmd` if script execution policy prevents running the corresponding `.ps1` wrappers.
 
@@ -98,39 +108,6 @@ npm run preview
 
 Open [localhost:4173](http://localhost:4173). The [phone preview](http://localhost:4173/__mobile) displays the app in a 390-pixel-wide frame. The preview server listens only on the local machine.
 
-## Build an Android APK
-
-The `preview` profile in `eas.json` creates a signed, installable **APK** that runs without Expo Go. EAS Build requires an Expo account and an internet connection.
-
-```sh
-npx eas-cli@latest login
-npx eas-cli@latest build --platform android --profile preview
-```
-
-When the build finishes, open the EAS download link on your Android phone, download the APK, and open it to install. To update an existing installation while preserving local data, keep the same application ID and signing key and install over the existing app.
-
-The `production` profile creates an **Android App Bundle** for store distribution:
-
-```sh
-npx eas-cli@latest build --platform android --profile production
-```
-
-An AAB cannot be installed directly like an APK. See the official [EAS Build setup](https://docs.expo.dev/build/setup/) and [Android APK guide](https://docs.expo.dev/build-reference/apk/) for details.
-
-### Building your own fork
-
-The checked-in configuration is linked to the maintainer's Expo project. Before building under your own account:
-
-1. Remove `expo.extra.eas.projectId` from `app.json`.
-2. Set your own `expo.slug` and `expo.android.package`. The current Android application ID is `it.university.opentaboo`.
-3. Run `npx eas-cli@latest init` to link your own Expo project, then use the build command above.
-
-For local native development, with Android Studio, a JDK, and the Android SDK configured:
-
-```sh
-npx expo run:android
-```
-
 ## Offline behavior and privacy
 
 An installed Android APK works offline from its first launch. The app does not download card packs, call translation services, or require a gameplay backend. Preferences, the current match, and match history are stored on the device using AsyncStorage.
@@ -141,24 +118,21 @@ Development with Expo Go still requires access to the Metro server. The web vers
 
 ## Development and checks
 
-| Command                  | Purpose                                                  |
-| ------------------------ | -------------------------------------------------------- |
-| `npm start`              | Start the Expo development server                        |
-| `npm run android`        | Start Expo for Android development                       |
-| `npm run web`            | Start the web development preview                        |
-| `npm run typecheck`      | Check TypeScript types                                   |
-| `npm test`               | Run the game engine and localization tests               |
-| `npm run cards:check`    | Check the Italian card expansion files                   |
-| `npm run export:android` | Generate the Android JavaScript/Hermes bundle and assets |
-| `npm run export:web`     | Generate the production web build                        |
-| `npm run preview`        | Serve the exported web build locally                     |
-| `npm run format`         | Format source files and documentation                    |
-| `npm run format:check`   | Check formatting                                         |
-| `npm run assets`         | Regenerate the included app icons and sound effects      |
+| Command                | Purpose                                             |
+| ---------------------- | --------------------------------------------------- |
+| `npm start`            | Start the Expo development server                   |
+| `npm run android`      | Start Expo for Android development                  |
+| `npm run web`          | Start the web development preview                   |
+| `npm run typecheck`    | Check TypeScript types                              |
+| `npm test`             | Run the game engine and localization tests          |
+| `npm run cards:check`  | Check the Italian card expansion files              |
+| `npm run export:web`   | Generate the production web build                   |
+| `npm run preview`      | Serve the exported web build locally                |
+| `npm run format`       | Format source files and documentation               |
+| `npm run format:check` | Check formatting                                    |
+| `npm run assets`       | Regenerate the included app icons and sound effects |
 
 The 24 automated tests cover scoring, skip limits, turn order, equal turns for all team counts, end-of-match behavior, saved-game recovery, device-language fallback, message interpolation, and card integrity across all five languages. Saved games from the original 40-card decks are expanded without losing the current card or progress.
-
-An Android export checks the bundle and assets; it does not produce an APK. A signed APK has also been built with EAS and its signing certificate verified against the previous build. Full physical-device testing, including audio and haptics, is still separate from these checks.
 
 ## Project structure
 
@@ -181,7 +155,6 @@ scripts/                      Asset generation, card checks, and preview server
 tests/                        Game engine and localization tests
 docs/                         Screenshots, validation notes, and translation guide
 app.json                      Expo configuration and Android permissions
-eas.json                      APK and App Bundle build profiles
 ```
 
 ## Customize cards and translations
