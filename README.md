@@ -7,8 +7,8 @@ An offline Android party game inspired by Taboo, featuring **5 languages**, **1,
 An independent project by **Gleetch**.
 
 <p align="center">
-  <img src="docs/preview-language-button.png" width="400" alt="Open Taboo home screen with the selected language flag in the header" />
-  <img src="docs/preview-languages.png" width="400" alt="Language selector with Italian, English, Spanish, German, and French flags" />
+  <img src="docs/preview-home-en.png" width="400" alt="Open Taboo homepage in English" />
+  <img src="docs/preview-game-en.png" width="400" alt="Open Taboo gameplay in English with a card, timer, scoreboard, and answer controls" />
 </p>
 
 ## Install on Android
