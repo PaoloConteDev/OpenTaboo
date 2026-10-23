@@ -4,6 +4,12 @@ Entries describe source versions. See GitHub Releases for published APKs.
 
 ## Unreleased
 
+No changes yet.
+
+## 1.1.1 — 2026-10-23
+
+### Changed
+
 - Remove the match history section and its trophy button.
 - Use a gear icon for settings and add the GitHub repository link below the app version.
 
