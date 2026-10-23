@@ -5,61 +5,68 @@ import spettacolo from './expansion/spettacolo';
 import viaggio from './expansion/viaggio';
 import extra from './expansion/extra';
 
-export type DeckId = 'classico' | 'quotidiano' | 'natura' | 'spettacolo' | 'viaggio' | 'extra';
+export type BuiltInDeckId =
+  'classico' | 'quotidiano' | 'natura' | 'spettacolo' | 'viaggio' | 'extra';
+export type DeckId = BuiltInDeckId | `custom-${string}`;
 export type Card = {
   id: string;
   word: string;
   forbidden: [string, string, string, string, string];
   deck: DeckId;
 };
-export const DECKS: { id: DeckId; name: string; subtitle: string; color: string; icon: string }[] =
-  [
-    {
-      id: 'classico',
-      name: 'Il grande classico',
-      subtitle: 'Le parole di sempre. Le risate di tutti.',
-      color: '#FFB64C',
-      icon: 'sparkles',
-    },
-    {
-      id: 'quotidiano',
-      name: 'Vita quotidiana',
-      subtitle: 'Le piccole cose, senza le solite parole.',
-      color: '#FF817C',
-      icon: 'coffee',
-    },
-    {
-      id: 'natura',
-      name: 'Un mondo selvaggio',
-      subtitle: 'Animali, natura e idee che fioriscono.',
-      color: '#A3D7B4',
-      icon: 'leaf',
-    },
-    {
-      id: 'spettacolo',
-      name: 'Ciak, si gioca!',
-      subtitle: 'Musica, sport e cultura pop.',
-      color: '#B6A1EF',
-      icon: 'clapperboard',
-    },
-    {
-      id: 'viaggio',
-      name: 'In giro per il mondo',
-      subtitle: 'La prossima destinazione? Il divertimento.',
-      color: '#8CCEE1',
-      icon: 'compass',
-    },
-    {
-      id: 'extra',
-      name: 'Fuori dagli schemi',
-      subtitle: 'Un po’ più difficile. Molto più divertente.',
-      color: '#F1A8CB',
-      icon: 'lightbulb',
-    },
-  ];
+export const DECKS: {
+  id: BuiltInDeckId;
+  name: string;
+  subtitle: string;
+  color: string;
+  icon: string;
+}[] = [
+  {
+    id: 'classico',
+    name: 'Il grande classico',
+    subtitle: 'Le parole di sempre. Le risate di tutti.',
+    color: '#FFB64C',
+    icon: 'sparkles',
+  },
+  {
+    id: 'quotidiano',
+    name: 'Vita quotidiana',
+    subtitle: 'Le piccole cose, senza le solite parole.',
+    color: '#FF817C',
+    icon: 'coffee',
+  },
+  {
+    id: 'natura',
+    name: 'Un mondo selvaggio',
+    subtitle: 'Animali, natura e idee che fioriscono.',
+    color: '#A3D7B4',
+    icon: 'leaf',
+  },
+  {
+    id: 'spettacolo',
+    name: 'Ciak, si gioca!',
+    subtitle: 'Musica, sport e cultura pop.',
+    color: '#B6A1EF',
+    icon: 'clapperboard',
+  },
+  {
+    id: 'viaggio',
+    name: 'In giro per il mondo',
+    subtitle: 'La prossima destinazione? Il divertimento.',
+    color: '#8CCEE1',
+    icon: 'compass',
+  },
+  {
+    id: 'extra',
+    name: 'Fuori dagli schemi',
+    subtitle: 'Un po’ più difficile. Molto più divertente.',
+    color: '#F1A8CB',
+    icon: 'lightbulb',
+  },
+];
 
 // Contenuti originali in italiano. Ogni riga: parola principale | cinque parole vietate.
-const raw: Record<DeckId, string> = {
+const raw: Record<BuiltInDeckId, string> = {
   classico: `Pizza|Forno|Mozzarella|Pomodoro|Margherita|Napoli
 Gelato|Freddo|Cono|Gusti|Crema|Estate
 Orologio|Ora|Polso|Lancette|Tempo|Minuti
@@ -302,7 +309,7 @@ Resilienza|Difficoltà|Superare|Adattarsi|Forza|Reagire
 Serendipità|Scoperta|Caso|Fortuna|Inatteso|Trovare`,
 };
 
-const expansions: Record<DeckId, string> = {
+const expansions: Record<BuiltInDeckId, string> = {
   classico,
   quotidiano,
   natura,

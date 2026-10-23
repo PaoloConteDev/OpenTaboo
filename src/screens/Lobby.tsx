@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n/LanguageProvider';
+import { useState } from 'react';
 import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import {
   ArrowRight,
@@ -8,13 +9,17 @@ import {
   Heart,
   Layers3,
   Play,
+  Plus,
+  Pencil,
   ShieldCheck,
   Trophy,
   Users,
   WifiOff,
   Zap,
 } from 'lucide-react-native';
-import { CARDS, DECKS, DeckId } from '../data/cards';
+import { CARDS, DeckId } from '../data/cards';
+import { CustomDeck, availableDecks, deckCards } from '../data/customDecks';
+import { CustomDeckEditor } from '../components/CustomDeckEditor';
 import { LANGUAGES } from '../i18n';
 import { Game, Settings } from '../game/engine';
 import { C, FONT } from '../theme';
@@ -260,13 +265,21 @@ export function Decks({
   selected,
   onToggle,
   onStart,
+  customDecks,
+  onSaveDeck,
+  onDeleteDeck,
 }: {
   selected: DeckId[];
   onToggle: (id: DeckId) => void;
   onStart: () => void;
+  customDecks: CustomDeck[];
+  onSaveDeck: (deck: CustomDeck) => void;
+  onDeleteDeck: (id: CustomDeck['id']) => void;
 }) {
   const { t, language } = useI18n();
   const { width } = useWindowDimensions();
+  const [editing, setEditing] = useState<CustomDeck | 'new' | null>(null);
+  const decks = availableDecks(customDecks, language);
   return (
     <View style={{ paddingTop: 32 }}>
       <SectionHeading
@@ -274,98 +287,170 @@ export function Decks({
         title={t('Un mazzo, mille storie.')}
         subtitle={t('Mescola i tuoi preferiti. Tutte le carte sono incluse, tutte offline.')}
       />
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 18 }}>
-        {DECKS.map((deck) => {
-          const Icon = DECK_ICONS[deck.icon]!;
-          const checked = selected.includes(deck.id);
-          return (
-            <Pressable
-              key={deck.id}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked }}
-              accessibilityLabel={t(deck.name)}
-              onPress={() => onToggle(deck.id)}
-              style={({ pressed }) => ({
-                width: width < 700 ? '100%' : '31.8%',
-                flexGrow: 1,
-                minWidth: 230,
-                borderRadius: 22,
-                borderWidth: 1,
-                borderColor: checked ? deck.color : C.line,
-                overflow: 'hidden',
-                opacity: pressed ? 0.8 : 1,
+      {[
+        { title: 'Mazzi inclusi', custom: false },
+        { title: 'Mazzi personalizzati', custom: true },
+      ].map((group) => (
+        <View key={group.title} style={{ gap: 18, marginTop: group.custom ? 32 : 0 }}>
+          <Txt accessibilityRole="header" style={{ fontFamily: FONT.semibold, fontSize: 23 }}>
+            {t(group.title)}
+          </Txt>
+          {group.custom && (
+            <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 21 }}>
+              {t(
+                'I mazzi personalizzati compaiono solo nella lingua in cui li crei. Puoi mescolarli con gli altri mazzi.',
+              )}
+            </Txt>
+          )}
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 18 }}>
+            {decks
+              .filter((deck) => deck.custom === group.custom)
+              .map((deck) => {
+                const Icon = DECK_ICONS[deck.icon]!;
+                const checked = selected.includes(deck.id);
+                return (
+                  <View
+                    key={deck.id}
+                    style={{
+                      width: width < 700 ? '100%' : '31.8%',
+                      flexGrow: 1,
+                      minWidth: 230,
+                      borderRadius: 22,
+                      borderWidth: 1,
+                      borderColor: checked ? deck.color : C.line,
+                      overflow: 'hidden',
+                      backgroundColor: C.panel,
+                    }}
+                  >
+                    <Pressable
+                      accessibilityRole="checkbox"
+                      accessibilityState={{ checked, disabled: deck.count === 0 }}
+                      disabled={deck.count === 0}
+                      accessibilityLabel={deck.custom ? deck.name : t(deck.name)}
+                      onPress={() => onToggle(deck.id)}
+                      style={({ pressed }) => ({
+                        opacity: pressed ? 0.8 : 1,
+                      })}
+                    >
+                      <View
+                        style={{
+                          height: 142,
+                          backgroundColor: deck.color,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <View
+                          style={{
+                            position: 'absolute',
+                            width: 130,
+                            height: 130,
+                            borderRadius: 70,
+                            borderWidth: 1,
+                            borderColor: '#34164B20',
+                            right: -25,
+                            top: -35,
+                          }}
+                        />
+                        <View
+                          style={{
+                            transform: [{ rotate: '-10deg' }],
+                            width: 79,
+                            height: 102,
+                            borderRadius: 12,
+                            backgroundColor: '#FFF9F099',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderWidth: 1,
+                            borderColor: '#FFFFFF80',
+                          }}
+                        >
+                          <Icon size={38} color={C.ink} strokeWidth={1.5} />
+                        </View>
+                        <View
+                          style={{
+                            position: 'absolute',
+                            right: 14,
+                            bottom: 14,
+                            backgroundColor: C.ink,
+                            width: 27,
+                            height: 27,
+                            borderRadius: 14,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            opacity: checked ? 1 : 0.25,
+                          }}
+                        >
+                          {checked && <Check size={16} color={deck.color} />}
+                        </View>
+                      </View>
+                      <View style={{ padding: 20, gap: 7, backgroundColor: C.panel }}>
+                        <Txt style={{ fontFamily: FONT.semibold, fontSize: 21 }}>
+                          {deck.custom ? deck.name : t(deck.name)}
+                        </Txt>
+                        <Txt style={{ color: C.muted, fontSize: 13 }}>{t(deck.subtitle)}</Txt>
+                        <Txt
+                          style={{
+                            color: deck.color,
+                            fontSize: 11,
+                            fontFamily: FONT.medium,
+                            marginTop: 8,
+                          }}
+                        >
+                          {t(
+                            '{{0}} {{0|CARTA|CARTE}} · {{1}}',
+                            deck.count,
+                            LANGUAGES.find(
+                              (item) => item.id === language,
+                            )!.name.toLocaleUpperCase(),
+                          )}
+                        </Txt>
+                      </View>
+                    </Pressable>
+                    {deck.custom && (
+                      <View style={{ padding: 14, paddingTop: 0 }}>
+                        <Button
+                          title={t('Modifica mazzo')}
+                          secondary
+                          icon={Pencil}
+                          onPress={() =>
+                            setEditing(customDecks.find((item) => item.id === deck.id)!)
+                          }
+                        />
+                      </View>
+                    )}
+                  </View>
+                );
               })}
-            >
-              <View
-                style={{
-                  height: 142,
-                  backgroundColor: deck.color,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                }}
-              >
+          </View>
+          {group.custom && (
+            <>
+              {!decks.some((deck) => deck.custom) && (
                 <View
                   style={{
-                    position: 'absolute',
-                    width: 130,
-                    height: 130,
-                    borderRadius: 70,
+                    padding: 22,
+                    borderRadius: 18,
                     borderWidth: 1,
-                    borderColor: '#34164B20',
-                    right: -25,
-                    top: -35,
-                  }}
-                />
-                <View
-                  style={{
-                    transform: [{ rotate: '-10deg' }],
-                    width: 79,
-                    height: 102,
-                    borderRadius: 12,
-                    backgroundColor: '#FFF9F099',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderWidth: 1,
-                    borderColor: '#FFFFFF80',
+                    borderColor: C.line,
+                    backgroundColor: C.panel,
                   }}
                 >
-                  <Icon size={38} color={C.ink} strokeWidth={1.5} />
+                  <Txt style={{ color: C.muted, fontSize: 14, lineHeight: 22 }}>
+                    {t('Non hai ancora creato mazzi in questa lingua.')}
+                  </Txt>
                 </View>
-                <View
-                  style={{
-                    position: 'absolute',
-                    right: 14,
-                    bottom: 14,
-                    backgroundColor: C.ink,
-                    width: 27,
-                    height: 27,
-                    borderRadius: 14,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    opacity: checked ? 1 : 0.25,
-                  }}
-                >
-                  {checked && <Check size={16} color={deck.color} />}
-                </View>
-              </View>
-              <View style={{ padding: 20, gap: 7, backgroundColor: C.panel }}>
-                <Txt style={{ fontFamily: FONT.semibold, fontSize: 21 }}>{t(deck.name)}</Txt>
-                <Txt style={{ color: C.muted, fontSize: 13 }}>{t(deck.subtitle)}</Txt>
-                <Txt
-                  style={{ color: deck.color, fontSize: 11, fontFamily: FONT.medium, marginTop: 8 }}
-                >
-                  {t(
-                    '{{0}} CARTE · {{1}}',
-                    CARDS.filter((c) => c.deck === deck.id).length,
-                    LANGUAGES.find((item) => item.id === language)!.name.toLocaleUpperCase(),
-                  )}
-                </Txt>
-              </View>
-            </Pressable>
-          );
-        })}
-      </View>
+              )}
+              <Button
+                title={t('Crea un mazzo')}
+                icon={Plus}
+                onPress={() => setEditing('new')}
+                secondary
+              />
+            </>
+          )}
+        </View>
+      ))}
       <View
         style={{
           marginTop: 26,
@@ -379,10 +464,25 @@ export function Decks({
         <Txt style={{ color: C.muted }}>
           {selected.length}{' '}
           {selected.length === 1 ? t('mazzo selezionato') : t('mazzi selezionati')} ·{' '}
-          {CARDS.filter((c) => selected.includes(c.deck)).length} {t('carte')}
+          {deckCards(customDecks, language).filter((c) => selected.includes(c.deck)).length}{' '}
+          {t('carte')}
         </Txt>
         <Button title={t('Gioca con questi mazzi')} onPress={onStart} />
       </View>
+      {editing && (
+        <CustomDeckEditor
+          deck={editing === 'new' ? undefined : editing}
+          onClose={() => setEditing(null)}
+          onSave={(deck) => {
+            onSaveDeck(deck);
+            setEditing(null);
+          }}
+          onDelete={(id) => {
+            onDeleteDeck(id);
+            setEditing(null);
+          }}
+        />
+      )}
     </View>
   );
 }

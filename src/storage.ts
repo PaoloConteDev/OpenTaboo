@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Game, Settings, normalizeSettings, restoreGame } from './game/engine';
+import { CustomDeck, normalizeCustomDecks } from './data/customDecks';
 export type MatchRecord = {
   id: number;
   teams: { name: string; score: number }[];
@@ -12,13 +13,16 @@ export async function loadSave(): Promise<{
   settings: Settings;
   game: Game | null;
   records: MatchRecord[];
+  customDecks: CustomDeck[];
 }> {
   try {
     const raw = await AsyncStorage.getItem(KEY);
     if (raw) {
       const data = JSON.parse(raw);
+      const customDecks = normalizeCustomDecks(data.customDecks);
       return {
-        settings: normalizeSettings(data.settings ?? {}),
+        customDecks,
+        settings: normalizeSettings(data.settings ?? {}, customDecks),
         game: restoreGame(data.game),
         records: Array.isArray(data.records)
           ? data.records
@@ -39,14 +43,15 @@ export async function loadSave(): Promise<{
   } catch {
     /* Missing, corrupted or inaccessible storage: start with safe defaults. */
   }
-  return { settings: normalizeSettings({}), game: null, records: [] };
+  return { settings: normalizeSettings({}), game: null, records: [], customDecks: [] };
 }
 export function saveState(
   settings: Settings,
   game: Game | null,
   records: MatchRecord[],
+  customDecks: CustomDeck[] = [],
 ): Promise<void> {
-  const serialized = JSON.stringify({ settings, game, records: records.slice(0, 20) });
+  const serialized = JSON.stringify({ settings, game, records: records.slice(0, 20), customDecks });
   writes = writes.catch(() => {}).then(() => AsyncStorage.setItem(KEY, serialized));
   return writes;
 }

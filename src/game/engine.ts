@@ -1,4 +1,6 @@
-import { CARDS, CARD_MAP, DeckId } from '../data/cards';
+import { DeckId } from '../data/cards';
+import { CustomDeck, deckCards, normalizeCustomDecks, playableDeckIds } from '../data/customDecks';
+import { Language } from '../i18n';
 
 export type Outcome = 'correct' | 'taboo' | 'skip';
 export type Phase = 'ready' | 'countdown' | 'playing' | 'paused' | 'review' | 'finished';
@@ -18,6 +20,7 @@ export type Entry = { cardId: string; outcome: Outcome };
 export type Turn = { team: number; round: number; entries: Entry[]; points: number };
 export type Game = {
   version: 1;
+  customDecks?: CustomDeck[];
   settings: Settings;
   phase: Phase;
   teams: { name: string; score: number }[];
@@ -49,7 +52,12 @@ export function shuffle<T>(items: readonly T[], random = Math.random): T[] {
   }
   return result;
 }
-export function normalizeSettings(input: Partial<Settings>): Settings {
+export function normalizeSettings(
+  input: Partial<Settings>,
+  customDecks: readonly CustomDeck[] = [],
+  language?: Language,
+): Settings {
+  const available = playableDeckIds(customDecks, language);
   const choose = (value: unknown, options: number[], fallback: number) =>
     options.includes(value as number) ? (value as number) : fallback;
   return {
@@ -65,22 +73,37 @@ export function normalizeSettings(input: Partial<Settings>): Settings {
     skipPenalty: choose(input.skipPenalty, [0, 1], 0),
     maxSkips: choose(input.maxSkips, [0, 3, 5, -1], 3),
     decks:
-      Array.isArray(input.decks) && input.decks.some((id) => CARDS.some((c) => c.deck === id))
-        ? [...new Set(input.decks.filter((id) => CARDS.some((c) => c.deck === id)))]
+      Array.isArray(input.decks) && input.decks.some((id) => available.has(id))
+        ? [...new Set(input.decks.filter((id) => available.has(id)))]
         : ['classico'],
     sound: typeof input.sound === 'boolean' ? input.sound : true,
     haptics: typeof input.haptics === 'boolean' ? input.haptics : true,
   };
 }
-export function createGame(settings: Settings): Game {
-  const safe = normalizeSettings(settings);
+export function createGame(
+  settings: Settings,
+  customDecks: readonly CustomDeck[] = [],
+  language?: Language,
+): Game {
+  const snapshot = normalizeCustomDecks(customDecks).filter(
+    (deck) =>
+      (!language || deck.language === language) &&
+      settings.decks.includes(deck.id) &&
+      deck.cards.length > 0,
+  );
+  const safe = normalizeSettings(settings, snapshot, language);
   return {
     version: 1,
+    customDecks: snapshot,
     settings: safe,
     phase: 'ready',
     teams: safe.names.slice(0, safe.teamCount).map((name) => ({ name, score: 0 })),
     turn: 0,
-    queue: shuffle(CARDS.filter((c) => safe.decks.includes(c.deck)).map((c) => c.id)),
+    queue: shuffle(
+      deckCards(snapshot)
+        .filter((c) => safe.decks.includes(c.deck))
+        .map((c) => c.id),
+    ),
     cursor: 0,
     entries: [],
     history: [],
@@ -141,6 +164,9 @@ export function commitTurn(game: Game): Game {
 export function restoreGame(value: unknown): Game | null {
   if (!value || typeof value !== 'object') return null;
   const g = value as Game;
+  const customDecks = normalizeCustomDecks(g.customDecks);
+  const cards = deckCards(customDecks);
+  const cardMap = new Map(cards.map((card) => [card.id, card]));
   if (
     g.version !== 1 ||
     !g.settings ||
@@ -157,14 +183,14 @@ export function restoreGame(value: unknown): Game | null {
   if (
     !Array.isArray(g.queue) ||
     !g.queue.length ||
-    !g.queue.every((id) => CARD_MAP.has(id)) ||
+    !g.queue.every((id) => cardMap.has(id)) ||
     !Number.isInteger(g.cursor) ||
     g.cursor < 0 ||
     g.cursor >= g.queue.length
   )
     return null;
   const validEntry = (e: Entry) =>
-    e && CARD_MAP.has(e.cardId) && ['correct', 'taboo', 'skip'].includes(e.outcome);
+    e && cardMap.has(e.cardId) && ['correct', 'taboo', 'skip'].includes(e.outcome);
   if (
     !Array.isArray(g.entries) ||
     !g.entries.every(validEntry) ||
@@ -188,7 +214,7 @@ export function restoreGame(value: unknown): Game | null {
     g.turn < 0
   )
     return null;
-  const settings = normalizeSettings(g.settings);
+  const settings = normalizeSettings(g.settings, customDecks);
   if (
     settings.teamCount !== g.teams.length ||
     g.turn > g.teams.length * settings.rounds ||
@@ -206,12 +232,13 @@ export function restoreGame(value: unknown): Game | null {
         : g.phase;
   // Extend a legacy saved deck without moving its cursor or changing its visible card.
   const queuedIds = new Set(g.queue);
-  const addedIds = CARDS.filter(
-    (card) => settings.decks.includes(card.deck) && !queuedIds.has(card.id),
-  ).map((card) => card.id);
+  const addedIds = cards
+    .filter((card) => settings.decks.includes(card.deck) && !queuedIds.has(card.id))
+    .map((card) => card.id);
   const queue = addedIds.length ? [...g.queue, ...shuffle(addedIds)] : g.queue;
   return {
     ...g,
+    customDecks,
     settings,
     queue,
     phase,

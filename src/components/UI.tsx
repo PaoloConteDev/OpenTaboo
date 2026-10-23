@@ -18,6 +18,7 @@ import {
   Compass,
   Clapperboard,
   Leaf,
+  Layers3,
   Lightbulb,
   Sparkles,
   Zap,
@@ -194,16 +195,19 @@ export const DECK_ICONS: Record<string, LucideIcon> = {
   clapperboard: Clapperboard,
   compass: Compass,
   lightbulb: Lightbulb,
+  layers: Layers3,
 };
 
 export function WordCard({
   card,
   compact = false,
   dense = false,
+  color,
 }: {
   card: Card;
   compact?: boolean;
   dense?: boolean;
+  color?: string;
 }) {
   const { t, locale } = useI18n();
   return (
@@ -213,6 +217,7 @@ export function WordCard({
       <View
         style={[
           s.cardHeader,
+          color ? { backgroundColor: color } : undefined,
           compact && { paddingVertical: 22 },
           dense && { paddingVertical: 14, gap: 8 },
         ]}

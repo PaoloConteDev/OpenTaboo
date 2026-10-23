@@ -1,8 +1,8 @@
 import { useI18n } from '../i18n/LanguageProvider';
 import React from 'react';
 import { Pressable, Switch, TextInput, View, useWindowDimensions } from 'react-native';
-import { Check, Settings2, Users } from 'lucide-react-native';
-import { CARDS, DECKS } from '../data/cards';
+import { Check, Settings2, Users, Plus } from 'lucide-react-native';
+import { CustomDeck, availableDecks, deckCards } from '../data/customDecks';
 import { Settings } from '../game/engine';
 import { C, FONT, TEAM_COLORS } from '../theme';
 import { Button, Choice, DECK_ICONS, SectionHeading, SectionLabel, Txt } from '../components/UI';
@@ -46,12 +46,18 @@ export function Setup({
   settings,
   onChange,
   onStart,
+  customDecks,
+  onDecks,
 }: {
   settings: Settings;
   onChange: (s: Settings) => void;
   onStart: () => void;
+  customDecks: CustomDeck[];
+  onDecks: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const decks = availableDecks(customDecks, language);
+  const cards = deckCards(customDecks, language);
   const { width } = useWindowDimensions();
   const mobile = width < 800;
   const update = <K extends keyof Settings>(key: K, value: Settings[K]) =>
@@ -187,15 +193,16 @@ export function Setup({
               {t('Scegline almeno uno. Puoi mescolarli tutti.')}
             </Txt>
             <View style={{ gap: 10 }}>
-              {DECKS.map((deck) => {
+              {decks.map((deck) => {
                 const Icon = DECK_ICONS[deck.icon]!;
                 const checked = settings.decks.includes(deck.id);
                 return (
                   <Pressable
                     key={deck.id}
                     accessibilityRole="checkbox"
-                    accessibilityState={{ checked }}
-                    accessibilityLabel={t('Mazzo {{0}}', t(deck.name))}
+                    accessibilityState={{ checked, disabled: deck.count === 0 }}
+                    disabled={deck.count === 0}
+                    accessibilityLabel={t('Mazzo {{0}}', deck.custom ? deck.name : t(deck.name))}
                     onPress={() => {
                       if (checked && settings.decks.length === 1) return;
                       update(
@@ -229,9 +236,11 @@ export function Setup({
                       <Icon size={18} color={deck.color} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Txt style={{ fontSize: 14, fontFamily: FONT.medium }}>{t(deck.name)}</Txt>
+                      <Txt style={{ fontSize: 14, fontFamily: FONT.medium }}>
+                        {deck.custom ? deck.name : t(deck.name)}
+                      </Txt>
                       <Txt style={{ color: C.muted, fontSize: 11, marginTop: 3 }}>
-                        {CARDS.filter((card) => card.deck === deck.id).length} {t('carte')}
+                        {t('{{0}} {{0|carta|carte}}', deck.count)}
                       </Txt>
                     </View>
                     <View
@@ -250,6 +259,13 @@ export function Setup({
                 );
               })}
             </View>
+            <Button
+              title={t('Crea o modifica i tuoi mazzi')}
+              icon={Plus}
+              secondary
+              onPress={onDecks}
+              style={{ marginTop: 16 }}
+            />
             <ToggleRow
               title={t('Effetti sonori')}
               description={t('Un suono per ogni momento del gioco.')}
@@ -280,7 +296,7 @@ export function Setup({
             <Txt style={{ color: C.muted, fontSize: 14, lineHeight: 23 }}>
               {t('{{0}} round', settings.rounds)} · {settings.seconds} {t('secondi a turno')}
               {'\n'}
-              {CARDS.filter((c) => settings.decks.includes(c.deck)).length}{' '}
+              {cards.filter((c) => settings.decks.includes(c.deck)).length}{' '}
               {t('carte pronte da indovinare')}
             </Txt>
             <Button title={t('Inizia la partita')} onPress={onStart} />

@@ -1,5 +1,5 @@
 import { useI18n } from '../i18n/LanguageProvider';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Platform, Pressable, View, useWindowDimensions } from 'react-native';
 import {
   Check,
@@ -71,7 +71,16 @@ export function Match({
   const mobile = width < 800;
   const team = activeTeam(game);
   const color = TEAM_COLORS[team]!;
-  const card = getLocalizedCard(game.queue[game.cursor]!, language);
+  const customCards = useMemo(
+    () =>
+      new Map(
+        game.customDecks?.flatMap((deck) => deck.cards.map((card) => [card.id, card] as const)),
+      ),
+    [game.customDecks],
+  );
+  const lookupCard = (id: string) => customCards.get(id) ?? getLocalizedCard(id, language);
+  const card = lookupCard(game.queue[game.cursor]!);
+  const customDeck = game.customDecks?.find((deck) => deck.id === card.deck);
   const motion = useRef(new Animated.Value(1)).current;
   useEffect(() => {
     motion.setValue(0);
@@ -242,7 +251,7 @@ export function Match({
               }}
             >
               <Txt style={{ flex: 1, minWidth: 100, fontFamily: FONT.medium }}>
-                {getLocalizedCard(entry.cardId, language).word}
+                {lookupCard(entry.cardId).word}
               </Txt>
               <View style={{ flexDirection: 'row', gap: 5 }}>
                 {(
@@ -255,7 +264,7 @@ export function Match({
                   <Pressable
                     key={outcome}
                     accessibilityRole="button"
-                    accessibilityLabel={`${getLocalizedCard(entry.cardId, language).word}: ${label}`}
+                    accessibilityLabel={`${lookupCard(entry.cardId).word}: ${label}`}
                     accessibilityState={{ selected: entry.outcome === outcome }}
                     onPress={() => onEdit(i, outcome)}
                     style={{
@@ -511,7 +520,7 @@ export function Match({
                   ],
                 }}
               >
-                <WordCard card={card} dense={mobile} />
+                <WordCard card={card} dense={mobile} color={customDeck?.color} />
               </Animated.View>
               <View
                 style={{

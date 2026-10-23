@@ -1,5 +1,35 @@
 // Italian source text, English, Spanish, German and French. No runtime translation service.
-const source = `e|||and|||y|||und|||et
+const source = `Crea un mazzo|||Create a deck|||Crear un mazo|||Kartenset erstellen|||Créer un paquet
+Modifica mazzo|||Edit deck|||Editar mazo|||Kartenset bearbeiten|||Modifier le paquet
+Mazzo personalizzato|||Custom deck|||Mazo personalizado|||Eigenes Kartenset|||Paquet personnalisé
+Mazzi inclusi|||Included decks|||Mazos incluidos|||Enthaltene Kartensets|||Paquets inclus
+Mazzi personalizzati|||Custom decks|||Mazos personalizados|||Eigene Kartensets|||Paquets personnalisés
+Non hai ancora creato mazzi in questa lingua.|||You haven't created any decks in this language yet.|||Todavía no has creado mazos en este idioma.|||Du hast noch keine Kartensets in dieser Sprache erstellt.|||Vous n’avez pas encore créé de paquets dans cette langue.
+I mazzi personalizzati compaiono solo nella lingua in cui li crei. Puoi mescolarli con gli altri mazzi.|||Custom decks appear only in the language you create them in. You can mix them with other decks.|||Los mazos personalizados solo aparecen en el idioma en que los creas. Puedes mezclarlos con otros mazos.|||Eigene Kartensets erscheinen nur in der Sprache, in der du sie erstellst. Du kannst sie mit anderen Kartensets mischen.|||Les paquets personnalisés apparaissent uniquement dans la langue de leur création. Vous pouvez les mélanger avec les autres paquets.
+Questo mazzo è legato alla lingua: {{0}}|||This deck belongs to the language: {{0}}|||Este mazo está vinculado al idioma: {{0}}|||Dieses Kartenset gehört zur Sprache: {{0}}|||Ce paquet est lié à la langue : {{0}}
+Nome del mazzo|||Deck name|||Nombre del mazo|||Name des Kartensets|||Nom du paquet
+Colore del mazzo|||Deck colour|||Color del mazo|||Farbe des Kartensets|||Couleur du paquet
+Colore {{0}}|||Colour {{0}}|||Color {{0}}|||Farbe {{0}}|||Couleur {{0}}
+Le tue carte|||Your cards|||Tus cartas|||Deine Karten|||Vos cartes
+Aggiungi almeno una carta per poter giocare con questo mazzo.|||Add at least one card to play with this deck.|||Añade al menos una carta para jugar con este mazo.|||Füge mindestens eine Karte hinzu, um mit diesem Kartenset zu spielen.|||Ajoutez au moins une carte pour jouer avec ce paquet.
+Modifica carta {{0}}|||Edit card {{0}}|||Editar carta {{0}}|||Karte {{0}} bearbeiten|||Modifier la carte {{0}}
+Elimina carta {{0}}|||Delete card {{0}}|||Eliminar carta {{0}}|||Karte {{0}} löschen|||Supprimer la carte {{0}}
+Modifica carta|||Edit card|||Editar carta|||Karte bearbeiten|||Modifier la carte
+Nuova carta|||New card|||Nueva carta|||Neue Karte|||Nouvelle carte
+Parola da indovinare|||Word to guess|||Palabra a adivinar|||Gesuchtes Wort|||Mot à deviner
+Parola vietata {{0}}|||Forbidden word {{0}}|||Palabra prohibida {{0}}|||Verbotenes Wort {{0}}|||Mot interdit {{0}}
+Aggiorna carta|||Update card|||Actualizar carta|||Karte aktualisieren|||Mettre à jour la carte
+Aggiungi carta|||Add card|||Añadir carta|||Karte hinzufügen|||Ajouter une carte
+Annulla carta|||Discard card changes|||Descartar cambios de la carta|||Kartenänderungen verwerfen|||Annuler les modifications de la carte
+Salva mazzo|||Save deck|||Guardar mazo|||Kartenset speichern|||Enregistrer le paquet
+Elimina mazzo|||Delete deck|||Eliminar mazo|||Kartenset löschen|||Supprimer le paquet
+Eliminare questo mazzo e tutte le sue carte?|||Delete this deck and all its cards?|||¿Eliminar este mazo y todas sus cartas?|||Dieses Kartenset und alle seine Karten löschen?|||Supprimer ce paquet et toutes ses cartes ?
+Conferma eliminazione|||Confirm deletion|||Confirmar eliminación|||Löschen bestätigen|||Confirmer la suppression
+Annulla|||Cancel|||Cancelar|||Abbrechen|||Annuler
+Scegli un nome per il mazzo.|||Choose a name for the deck.|||Elige un nombre para el mazo.|||Wähle einen Namen für das Kartenset.|||Choisissez un nom pour le paquet.
+Inserisci una parola e cinque parole vietate, tutte diverse.|||Enter a word and five forbidden words, all different.|||Introduce una palabra y cinco palabras prohibidas, todas diferentes.|||Gib ein Wort und fünf verbotene Wörter ein, alle unterschiedlich.|||Saisissez un mot et cinq mots interdits, tous différents.
+Crea o modifica i tuoi mazzi|||Create or edit your decks|||Crea o edita tus mazos|||Eigene Kartensets erstellen oder bearbeiten|||Créer ou modifier vos paquets
+e|||and|||y|||und|||et
 Gioca|||Play|||Jugar|||Spielen|||Jouer
 I mazzi|||Card decks|||Los mazos|||Die Kartensets|||Les paquets
 Come si gioca|||How to play|||Cómo jugar|||Spielregeln|||Règles du jeu
@@ -70,7 +100,8 @@ Fatto per stare insieme. Anche senza connessione.|||Made for being together. Eve
 SCEGLI LE TUE PAROLE|||CHOOSE YOUR WORDS|||ELIGE TUS PALABRAS|||WÄHLE DEINE WÖRTER|||CHOISISSEZ VOS MOTS
 Un mazzo, mille storie.|||One deck, countless stories.|||Un mazo, mil historias.|||Ein Kartenset, tausend Geschichten.|||Un paquet, mille histoires.
 Mescola i tuoi preferiti. Tutte le carte sono incluse, tutte offline.|||Mix your favourites. Every card is included and available offline.|||Mezcla tus favoritos. Todas las tarjetas están incluidas y disponibles sin conexión.|||Mische deine Favoriten. Alle Karten sind enthalten und offline verfügbar.|||Mélangez vos favoris. Toutes les cartes sont incluses et disponibles hors ligne.
-{{0}} CARTE · {{1}}|||{{0}} CARDS · {{1}}|||{{0}} TARJETAS · {{1}}|||{{0}} KARTEN · {{1}}|||{{0}} CARTES · {{1}}
+{{0}} {{0|CARTA|CARTE}} · {{1}}|||{{0}} {{0|CARD|CARDS}} · {{1}}|||{{0}} {{0|TARJETA|TARJETAS}} · {{1}}|||{{0}} {{0|KARTE|KARTEN}} · {{1}}|||{{0}} {{0|CARTE|CARTES}} · {{1}}
+{{0}} {{0|carta|carte}}|||{{0}} {{0|card|cards}}|||{{0}} {{0|tarjeta|tarjetas}}|||{{0}} {{0|Karte|Karten}}|||{{0}} {{0|carte|cartes}}
 mazzo selezionato|||deck selected|||mazo seleccionado|||Kartenset ausgewählt|||paquet sélectionné
 mazzi selezionati|||decks selected|||mazos seleccionados|||Kartensets ausgewählt|||paquets sélectionnés
 carte|||cards|||tarjetas|||Karten|||cartes

@@ -21,12 +21,15 @@ The APK runs on its own: no Expo Go, account, or computer is required. After ins
 
 To keep your saved matches and preferences when updating, install the new APK over the existing app and choose **Update** when prompted. Keep the current app installed.
 
+See the [changelog](CHANGELOG.md) for release notes. Changes under **Unreleased** are not yet included in a published APK. Maintainers can follow the [APK build and release guide](docs/RELEASING.md) to publish a new version; `npm run export:android` alone does not generate an installable APK.
+
 ## Features
 
 - **Play offline:** cards, translations, fonts, icons, and sound effects are bundled with the app.
 - **2–4 teams:** customize team names and play together on one phone.
 - **Five languages:** Italian, English, Spanish, German, and French for menus, rules, decks, and cards.
 - **1,800 cards in each language:** six mixable decks with 300 cards each. Every card has one target word and five forbidden words.
+- **Custom decks:** create multiple decks with a name, colour, and your own cards. Each deck belongs to the language selected when you create it and appears only in that language. Mix custom and included decks in any combination.
 - **Configurable matches:** choose the timer, number of rounds, penalties, and skip limit.
 - **Turn review:** correct card outcomes before confirming the score.
 - **Local progress:** resume a saved match and browse the last 20 completed games.
@@ -73,6 +76,8 @@ Tap the **flag button to the left of the trophy** to change language. The button
 | **Total**             |          **1,800** |
 
 The five languages provide **9,000 localized card versions** of the same 1,800 base cards. Translations were prepared using local models and editorial corrections; specialized vocabulary may benefit from further language review.
+
+In **Card decks**, the **Included decks** and **Custom decks** sections keep the two collections separate while allowing a combined selection. Choose **Create a deck** below the custom decks, enter a name, choose a colour, and add cards with one target and five distinct forbidden words. You can edit cards, rename or recolour decks, and delete decks. Empty decks can be saved, but need at least one card before they can be selected. Custom decks are saved only on this device. A saved match keeps its own copy of the custom cards, so editing or deleting a deck does not change that match. If you change the interface language during a match, custom cards retain their original wording.
 
 ## Run the source (optional)
 
@@ -132,7 +137,7 @@ Development with Expo Go still requires access to the Metro server. The web vers
 | `npm run format:check` | Check formatting                                    |
 | `npm run assets`       | Regenerate the included app icons and sound effects |
 
-The 24 automated tests cover scoring, skip limits, turn order, equal turns for all team counts, end-of-match behavior, saved-game recovery, device-language fallback, message interpolation, and card integrity across all five languages. Saved games from the original 40-card decks are expanded without losing the current card or progress.
+The 29 automated tests cover scoring, skip limits, turn order, equal turns for all team counts, end-of-match behavior, saved-game recovery, device-language fallback, message interpolation, card integrity across all five languages, and custom deck validation, language filtering, mixing, and match snapshots. Saved games from the original 40-card decks are expanded without losing the current card or progress.
 
 ## Project structure
 

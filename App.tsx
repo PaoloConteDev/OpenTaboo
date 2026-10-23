@@ -1,6 +1,7 @@
 import { LanguageProvider, useI18n } from './src/i18n/LanguageProvider';
+import appConfig from './app.json';
 import { LANGUAGES } from './src/i18n';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   AppState,
@@ -36,6 +37,7 @@ import {
 } from 'lucide-react-native';
 import { C, FONT, TEAM_COLORS } from './src/theme';
 import { DeckId } from './src/data/cards';
+import { CustomDeck } from './src/data/customDecks';
 import {
   DEFAULT_SETTINGS,
   Game,
@@ -95,6 +97,11 @@ function Application() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [game, setGame] = useState<Game | null>(null);
   const [records, setRecords] = useState<MatchRecord[]>([]);
+  const [customDecks, setCustomDecks] = useState<CustomDeck[]>([]);
+  const activeSettings = useMemo(
+    () => ({ ...settings, decks: normalizeSettings(settings, customDecks, language).decks }),
+    [settings, customDecks, language],
+  );
   const [loaded, setLoaded] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
   const [countdown, setCountdown] = useState(3);
@@ -103,9 +110,9 @@ function Application() {
   const deadline = useRef(0);
   const lastTick = useRef(-1);
   const gameRef = useRef<Game | null>(null);
-  const stateRef = useRef({ settings, records });
+  const stateRef = useRef({ settings, records, customDecks });
   const pageRef = useRef(page);
-  stateRef.current = { settings, records };
+  stateRef.current = { settings, records, customDecks };
   pageRef.current = page;
   const feedback = useFeedback(game && page === 'match' ? game.settings : settings);
   const feedbackRef = useRef(feedback);
@@ -115,7 +122,12 @@ function Application() {
     setGame(next);
   }, []);
   const persist = useCallback((g = gameRef.current) => {
-    void saveState(stateRef.current.settings, g, stateRef.current.records)
+    void saveState(
+      stateRef.current.settings,
+      g,
+      stateRef.current.records,
+      stateRef.current.customDecks,
+    )
       .then(() => setStorageError(false))
       .catch(() => setStorageError(true));
   }, []);
@@ -125,6 +137,7 @@ function Application() {
       if (!live) return;
       setSettings(saved.settings);
       setRecords(saved.records);
+      setCustomDecks(saved.customDecks);
       update(saved.game);
       setLoaded(true);
     });
@@ -138,6 +151,7 @@ function Application() {
     loaded,
     settings,
     records,
+    customDecks,
     game?.phase,
     game?.turn,
     game?.cursor,
@@ -283,9 +297,9 @@ function Application() {
     }
   };
   const startMatch = () => {
-    const safe = normalizeSettings(settings);
+    const safe = normalizeSettings(activeSettings, customDecks, language);
     setSettings(safe);
-    update(createGame(safe));
+    update(createGame(safe, customDecks, language));
     setDialog(null);
     navigate('match');
   };
@@ -294,14 +308,14 @@ function Application() {
     else startMatch();
   };
   const toggleDeck = (id: DeckId) =>
-    setSettings((prev) => ({
-      ...prev,
-      decks: prev.decks.includes(id)
-        ? prev.decks.length > 1
-          ? prev.decks.filter((d) => d !== id)
-          : prev.decks
-        : [...prev.decks, id],
-    }));
+    setSettings({
+      ...activeSettings,
+      decks: activeSettings.decks.includes(id)
+        ? activeSettings.decks.length > 1
+          ? activeSettings.decks.filter((d) => d !== id)
+          : activeSettings.decks
+        : [...activeSettings.decks, id],
+    });
   if (!loaded)
     return (
       <View style={{ flex: 1, backgroundColor: C.bg, justifyContent: 'center' }}>
@@ -483,7 +497,7 @@ function Application() {
           )}
           {page === 'home' && (
             <Home
-              settings={settings}
+              settings={activeSettings}
               game={game}
               onStart={() => navigate('setup')}
               onDecks={() => navigate('decks')}
@@ -493,14 +507,33 @@ function Application() {
           )}
           {page === 'decks' && (
             <Decks
-              selected={settings.decks}
+              key={language}
+              selected={activeSettings.decks}
+              customDecks={customDecks}
+              onSaveDeck={(deck) => {
+                setCustomDecks((prev) => [...prev.filter((item) => item.id !== deck.id), deck]);
+                if (deck.cards.length > 0 && !customDecks.some((item) => item.id === deck.id)) {
+                  setSettings({ ...activeSettings, decks: [...activeSettings.decks, deck.id] });
+                }
+              }}
+              onDeleteDeck={(id) => {
+                const remaining = customDecks.filter((deck) => deck.id !== id);
+                setCustomDecks(remaining);
+                setSettings(normalizeSettings(settings, remaining, language));
+              }}
               onToggle={toggleDeck}
               onStart={() => navigate('setup')}
             />
           )}
           {page === 'rules' && <Rules onStart={() => navigate('setup')} />}
           {page === 'setup' && (
-            <Setup settings={settings} onChange={setSettings} onStart={requestStart} />
+            <Setup
+              settings={activeSettings}
+              customDecks={customDecks}
+              onDecks={() => navigate('decks')}
+              onChange={setSettings}
+              onStart={requestStart}
+            />
           )}
           {page === 'match' && game && (
             <Match
@@ -531,7 +564,7 @@ function Application() {
               onReplay={() => {
                 const g = gameRef.current;
                 if (g) {
-                  update(createGame(g.settings));
+                  update(createGame(g.settings, g.customDecks));
                   setCountdown(3);
                 }
               }}
@@ -765,7 +798,7 @@ function Application() {
                       gap: 12,
                     }}
                   >
-                    <SectionLabel>OPEN TABOO · 1.0.0</SectionLabel>
+                    <SectionLabel>OPEN TABOO · {appConfig.expo.version}</SectionLabel>
                     <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 22 }}>
                       {t(
                         'Progetto indipendente. Grafica, suoni e carte originali. Ispirato al gioco di parole Taboo; non affiliato a Hasbro o Marmalade Game Studio.',

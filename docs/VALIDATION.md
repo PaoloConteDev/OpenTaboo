@@ -31,3 +31,34 @@ L’APK di anteprima compilato tramite EAS il 22 ottobre 2026 (versione 1.0.0, c
 Nell’APK originale erano presenti `SYSTEM_ALERT_WINDOW`, `READ_EXTERNAL_STORAGE` e `WRITE_EXTERNAL_STORAGE`, non necessari al gioco. La configurazione aggiornata li esclude, insieme ai permessi per microfono e riproduzione multimediale in background già esclusi. L’APK aggiornato è stato compilato con EAS il 22 ottobre 2026 (build `f2c0f326-8f19-4747-bdf5-4f6957a9fec1`), scaricato e verificato: firma valida e certificato identico a quello precedente, pacchetto `it.university.opentaboo`, versione 1.0.0 e codice 1. L’ispezione del manifest conferma l’assenza dei permessi rimossi; restano Internet, stato della rete, audio, vibrazione, wake lock e il permesso interno del ricevitore non esportato. Il collaudo completo della nuova versione sul telefono resta da confermare. Il motivo preciso del precedente blocco Play Protect non è stato identificato.
 
 `npm audit` segnala 15 advisory alti nella catena transitiva degli strumenti Expo/Metro (radici: `braces` e `node-forge`). Non è stato eseguito `audit fix --force`, che propone downgrade incompatibili di Expo e React Native. Il lockfile mantiene le versioni allineate a SDK 58; aggiornare la toolchain quando vengono pubblicate correzioni compatibili.
+
+## APK con mazzi personalizzati · 23 ottobre 2026
+
+La [build EAS `6720e837-00da-46b1-aa05-7a25524adb71`](https://expo.dev/accounts/gleetch/projects/open-taboo/builds/6720e837-00da-46b1-aa05-7a25524adb71), profilo `preview`, è terminata con successo. L’APK è stato scaricato in `artifacts/Open-Taboo-mazzi-custom.apk` (79.028.554 byte). La cartella `artifacts/` è esclusa da Git; il binario non è stato pubblicato in una nuova GitHub Release.
+
+- Pacchetto: `it.university.opentaboo`; versione visualizzata: `1.0.0`; `versionCode`: `1`.
+- Firma APK v2 valida, con certificato SHA-256 `717c43336be23455d945c064c8e04d82b6c52a53b39c0f322b04d3ee4da81ec1`, identico all’APK precedente.
+- SHA-256 del file APK: `3909d79f31bac8282260582e8e643adf752289f784b0a36202617321250899fd`.
+- Il bundle incluso nell’APK contiene il codice e i testi dell’editor dei mazzi personalizzati.
+- TypeScript, 29 test automatici, integrità delle carte ed esportazioni web e Android superati prima della build.
+- Collaudo nel browser: creazione di più mazzi, colori, selezione combinata, filtro per lingua, persistenza dopo ricaricamento, partita con carte personalizzate, riepilogo e modifica delle carte senza alterare una partita salvata. Editor verificato anche a 390 pixel.
+
+Questa è una build interna dei sorgenti modificati, ancora non committati. La versione numerica non è stata incrementata. Prima di una nuova release pubblica, seguire `RELEASING.md` per versionamento, commit, tag e allegato APK. Installazione e funzionamento su hardware Android restano da verificare.
+
+## Separazione dei mazzi · 23 ottobre 2026
+
+La schermata dei mazzi distingue ora **Mazzi inclusi** e **Mazzi personalizzati**, con **Crea un mazzo** sotto l’elenco personalizzato. Il filtro per lingua e la selezione combinata restano disponibili. Sono stati verificati l’apertura dell’editor dal pulsante spostato, lo stato senza mazzi personalizzati in inglese e il layout desktop e telefono a 390 pixel. TypeScript, tutti i 29 test e la formattazione dei file modificati sono passati; l’esportazione web è riuscita.
+
+La [build EAS `9c750712-2ff5-48ee-815f-40298f1bc9f0`](https://expo.dev/accounts/gleetch/projects/open-taboo/builds/9c750712-2ff5-48ee-815f-40298f1bc9f0) è terminata con successo. Il nuovo APK è in `artifacts/Open-Taboo-mazzi-separati.apk` (79.030.318 byte), con SHA-256 `43e023b32950584c94fb5b74633b9352d10d677c917cd1443276873206da3626`. La firma APK v2 è valida e usa lo stesso certificato della build precedente; pacchetto, versione `1.0.0` e `versionCode` `1` restano invariati. Il bundle dell’APK contiene i nuovi titoli delle sezioni e il messaggio per la sezione vuota.
+
+Il binario non è stato pubblicato su GitHub e non è stato collaudato su hardware Android.
+
+## Preparazione release 1.1.0 · 23 ottobre 2026
+
+La versione dei sorgenti è `1.1.0`, sincronizzata fra `app.json`, `package.json` e i metadati del lockfile. Il codice Android è `2`; `eas.json` usa esplicitamente la gestione locale delle versioni. La schermata delle impostazioni legge la versione da `app.json`. TypeScript e tutti i 29 test sono passati dopo queste modifiche.
+
+La [build EAS `057bed9a-fccb-42aa-9525-1c3af8727506`](https://expo.dev/accounts/gleetch/projects/open-taboo/builds/057bed9a-fccb-42aa-9525-1c3af8727506) è terminata con successo. L’APK da allegare alla release è `artifacts/Open-Taboo-v1.1.0.apk` (79.032.030 byte), con SHA-256 `22ac82f2f569165335aca3fda9801bad0b47905e789c4e8d1a1561ed6a9d9c0f`.
+
+`aapt dump badging` conferma pacchetto `it.university.opentaboo`, versione `1.1.0`, codice `2`, minimo API 24 e target API 36. `apksigner verify --verbose --print-certs` conferma una firma v2 valida e lo stesso certificato delle build precedenti. Il checksum è salvato anche in `artifacts/Open-Taboo-v1.1.0.apk.sha256`.
+
+Sono pronti il changelog 1.1.0 e `RELEASE_NOTES_1.1.0.md`. La procedura per commit, tag, push e pubblicazione su GitHub è in `RELEASING.md`; il collaudo del nuovo APK su hardware Android non è stato registrato.

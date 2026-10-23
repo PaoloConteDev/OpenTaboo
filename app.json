@@ -2,13 +2,14 @@
   "expo": {
     "name": "Open Taboo",
     "slug": "open-taboo",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
     "scheme": "opentaboo",
     "backgroundColor": "#291148",
     "android": {
+      "versionCode": 2,
       "package": "it.university.opentaboo",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
