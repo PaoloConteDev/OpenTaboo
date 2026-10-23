@@ -4,7 +4,7 @@
 
 An offline Android party game inspired by Taboo, featuring **5 languages**, **1,800 cards per language**, and **2–4 teams**. Built with Expo, React Native, and TypeScript.
 
-An independent project by **Gleetch**.
+An independent open-source project by **Gleetch**.
 
 <p align="center">
   <img src="docs/preview-home-en.png" width="400" alt="Open Taboo homepage in English" />
