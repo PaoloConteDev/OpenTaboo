@@ -13,6 +13,12 @@ No changes yet.
 - Remove the match history section and its trophy button.
 - Use a gear icon for settings and add the GitHub repository link below the app version.
 
+### Validation
+
+- All 29 tests, TypeScript checks, and web and Android exports passed.
+- The APK was built locally on Windows with Gradle and verified: version 1.1.1, Android code 3, and the same signing certificate as 1.1.0.
+- Desktop and 390-pixel phone browser previews confirmed the settings layout and repository link. Physical Android hardware testing remains outstanding.
+
 ## 1.1.0 — 2026-10-23
 
 ### Changed

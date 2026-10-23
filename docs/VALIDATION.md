@@ -62,3 +62,15 @@ La [build EAS `057bed9a-fccb-42aa-9525-1c3af8727506`](https://expo.dev/accounts/
 `aapt dump badging` conferma pacchetto `it.university.opentaboo`, versione `1.1.0`, codice `2`, minimo API 24 e target API 36. `apksigner verify --verbose --print-certs` conferma una firma v2 valida e lo stesso certificato delle build precedenti. Il checksum è salvato anche in `artifacts/Open-Taboo-v1.1.0.apk.sha256`.
 
 Sono pronti il changelog 1.1.0 e `RELEASE_NOTES_1.1.0.md`. La procedura per commit, tag, push e pubblicazione su GitHub è in `RELEASING.md`; il collaudo del nuovo APK su hardware Android non è stato registrato.
+
+## APK 1.1.1 compilato in locale · 23 ottobre 2026
+
+L’APK `artifacts/Open-Taboo-v1.1.1.apk` è stato compilato su Windows con Java 21 e Gradle 9.4.1, tramite `gradlew.bat app:assembleRelease`. Il tag `v1.1.1` identifica il commit sorgente `23a6ff30d34455eda41d6ae824e0670fbbfb9324`. La build cloud avviata in precedenza è stata annullata dopo il successo della compilazione locale.
+
+- Pacchetto: `it.university.opentaboo`; versione `1.1.1`; codice Android `3`.
+- File: 79.026.750 byte; SHA-256 `a76eb1cc25a4f2a175b2e108f05fc36ee876b944b0abdb07d0ce22d534f7392a`.
+- Firma verificata con `apksigner`; certificato SHA-256 `717c43336be23455d945c064c8e04d82b6c52a53b39c0f322b04d3ee4da81ec1`, identico alle release precedenti.
+- Il bundle contiene il link GitHub e non contiene più i testi dello storico rimosso. Il manifest non include i permessi esplicitamente bloccati; l’APK non contiene file di firma privati.
+- TypeScript e tutti i 29 test sono passati. Impostazioni, icona a ingranaggio e link sono stati verificati nel browser, anche nel layout a 390 pixel.
+
+La prima build locale ha richiesto Gradle 9.4.1 e i componenti Android SDK 37. Un errore di Ninja sui percorsi lunghi è stato risolto impostando `CMAKE_OBJECT_PATH_MAX=240` nella configurazione CMake del progetto Android generato. La build successiva è riuscita, riutilizzando la cache. Le credenziali della firma esistente sono state scaricate con EAS e restano escluse da Git e dagli archivi di build, insieme al progetto Android generato. Non è stato registrato un collaudo su hardware Android.
