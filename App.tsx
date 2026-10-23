@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   AppState,
   BackHandler,
+  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -27,15 +28,15 @@ import {
   ArrowLeft,
   Check,
   CircleHelp,
+  ExternalLink,
   Layers3,
   Play,
-  Settings2,
-  Trophy,
+  Settings as SettingsIcon,
   WifiOff,
   X,
   Zap,
 } from 'lucide-react-native';
-import { C, FONT, TEAM_COLORS } from './src/theme';
+import { C, FONT } from './src/theme';
 import { DeckId } from './src/data/cards';
 import { CustomDeck } from './src/data/customDecks';
 import {
@@ -48,16 +49,16 @@ import {
   normalizeSettings,
   recordAnswer,
 } from './src/game/engine';
-import { Button, IconButton, SectionHeading, SectionLabel, Txt } from './src/components/UI';
+import { Button, IconButton, SectionLabel, Txt } from './src/components/UI';
 import { Decks, Home, Rules } from './src/screens/Lobby';
 import { Setup, ToggleRow } from './src/screens/Setup';
 import { Match } from './src/screens/Match';
 import { useFeedback } from './src/hooks/useFeedback';
-import { MatchRecord, loadSave, saveState } from './src/storage';
+import { loadSave, saveState } from './src/storage';
 import { LanguageFlag } from './src/components/LanguageFlag';
 
 void SplashScreen.preventAutoHideAsync().catch(() => {});
-type Page = 'home' | 'setup' | 'decks' | 'rules' | 'match' | 'history';
+type Page = 'home' | 'setup' | 'decks' | 'rules' | 'match';
 type Dialog = 'settings' | 'replace' | 'language' | null;
 function Awake() {
   useKeepAwake();
@@ -89,14 +90,13 @@ export default function App() {
   );
 }
 function Application() {
-  const { t, language, locale, setLanguage, languageStorageError } = useI18n();
+  const { t, language, setLanguage, languageStorageError } = useI18n();
   const { width } = useWindowDimensions();
   const mobile = width < 1000;
   const insets = useSafeAreaInsets();
   const [page, setPage] = useState<Page>('home');
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [game, setGame] = useState<Game | null>(null);
-  const [records, setRecords] = useState<MatchRecord[]>([]);
   const [customDecks, setCustomDecks] = useState<CustomDeck[]>([]);
   const activeSettings = useMemo(
     () => ({ ...settings, decks: normalizeSettings(settings, customDecks, language).decks }),
@@ -110,9 +110,9 @@ function Application() {
   const deadline = useRef(0);
   const lastTick = useRef(-1);
   const gameRef = useRef<Game | null>(null);
-  const stateRef = useRef({ settings, records, customDecks });
+  const stateRef = useRef({ settings, customDecks });
   const pageRef = useRef(page);
-  stateRef.current = { settings, records, customDecks };
+  stateRef.current = { settings, customDecks };
   pageRef.current = page;
   const feedback = useFeedback(game && page === 'match' ? game.settings : settings);
   const feedbackRef = useRef(feedback);
@@ -122,12 +122,7 @@ function Application() {
     setGame(next);
   }, []);
   const persist = useCallback((g = gameRef.current) => {
-    void saveState(
-      stateRef.current.settings,
-      g,
-      stateRef.current.records,
-      stateRef.current.customDecks,
-    )
+    void saveState(stateRef.current.settings, g, stateRef.current.customDecks)
       .then(() => setStorageError(false))
       .catch(() => setStorageError(true));
   }, []);
@@ -136,7 +131,6 @@ function Application() {
     void loadSave().then((saved) => {
       if (!live) return;
       setSettings(saved.settings);
-      setRecords(saved.records);
       setCustomDecks(saved.customDecks);
       update(saved.game);
       setLoaded(true);
@@ -150,7 +144,6 @@ function Application() {
   }, [
     loaded,
     settings,
-    records,
     customDecks,
     game?.phase,
     game?.turn,
@@ -279,20 +272,6 @@ function Application() {
     const next = commitTurn(g);
     update(next);
     if (next.phase === 'finished') {
-      setRecords((prev) =>
-        [
-          {
-            id: Date.now(),
-            teams: next.teams,
-            rounds: next.settings.rounds,
-            guessed: next.history.reduce(
-              (n, t) => n + t.entries.filter((e) => e.outcome === 'correct').length,
-              0,
-            ),
-          },
-          ...prev,
-        ].slice(0, 20),
-      );
       feedback('finish');
     }
   };
@@ -437,13 +416,7 @@ function Application() {
               <LanguageFlag language={language} size={24} />
             </IconButton>
             <IconButton
-              icon={Trophy}
-              compact={mobile}
-              label={t('Storico partite')}
-              onPress={() => navigate('history')}
-            />
-            <IconButton
-              icon={Settings2}
+              icon={SettingsIcon}
               compact={mobile}
               label={t('Impostazioni')}
               onPress={() => {
@@ -573,75 +546,6 @@ function Application() {
                 if (g) update({ ...g, settings: { ...g.settings, sound: !g.settings.sound } });
               }}
             />
-          )}
-          {page === 'history' && (
-            <View style={{ paddingTop: 32, gap: 18 }}>
-              <SectionHeading
-                eyebrow={t('I VOSTRI MOMENTI DI GLORIA')}
-                title={t('Le partite da ricordare.')}
-                subtitle={t('Le ultime 20 sfide, salvate solo su questo dispositivo.')}
-              />
-              {records.length === 0 ? (
-                <View style={s.empty}>
-                  <Trophy size={48} color={C.orange} strokeWidth={1.5} />
-                  <Txt style={{ fontSize: 26, fontFamily: FONT.semibold }}>
-                    {t('Il podio vi aspetta.')}
-                  </Txt>
-                  <Txt style={{ color: C.muted, textAlign: 'center', lineHeight: 24 }}>
-                    {t('Giocate la prima partita per iniziare')}
-                    {'\n'}
-                    {t('a scrivere la vostra storia.')}
-                  </Txt>
-                  <Button title={t('Creiamo una partita')} onPress={() => navigate('setup')} />
-                </View>
-              ) : (
-                records.map((record) => {
-                  const high = Math.max(...record.teams.map((t) => t.score));
-                  return (
-                    <View
-                      key={record.id}
-                      style={{ backgroundColor: C.panel, borderRadius: 18, padding: 23, gap: 17 }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          flexWrap: 'wrap',
-                          gap: 8,
-                        }}
-                      >
-                        <Txt style={{ color: C.muted, fontSize: 12 }}>
-                          {new Date(record.id).toLocaleDateString(locale, {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          })}
-                        </Txt>
-                        <Txt style={{ color: C.muted, fontSize: 12 }}>
-                          {t('{{0}} round', record.rounds)} · {record.guessed} {t('indovinate')}
-                        </Txt>
-                      </View>
-                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 24 }}>
-                        {record.teams.map((t, i) => (
-                          <View
-                            key={i}
-                            style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}
-                          >
-                            <Txt
-                              style={{ color: TEAM_COLORS[i], fontSize: 22, fontFamily: FONT.bold }}
-                            >
-                              {t.score}
-                            </Txt>
-                            <Txt style={{ fontSize: 15 }}>{t.name}</Txt>
-                            {t.score === high && <Trophy size={14} color={C.orange} />}
-                          </View>
-                        ))}
-                      </View>
-                    </View>
-                  );
-                })
-              )}
-            </View>
           )}
           {page !== 'home' && (
             <View style={{ paddingVertical: 28, alignItems: 'center' }}>
@@ -799,6 +703,25 @@ function Application() {
                     }}
                   >
                     <SectionLabel>OPEN TABOO · {appConfig.expo.version}</SectionLabel>
+                    <Pressable
+                      accessibilityRole="link"
+                      onPress={() =>
+                        void Linking.openURL('https://github.com/PaoloConteDev/OpenTaboo')
+                      }
+                      style={({ pressed }) => ({
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        alignSelf: 'flex-start',
+                        gap: 7,
+                        paddingVertical: 8,
+                        opacity: pressed ? 0.7 : 1,
+                      })}
+                    >
+                      <Txt style={{ color: C.coral, fontSize: 13, fontFamily: FONT.medium }}>
+                        GitHub · PaoloConteDev/OpenTaboo
+                      </Txt>
+                      <ExternalLink size={14} color={C.coral} />
+                    </Pressable>
                     <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 22 }}>
                       {t(
                         'Progetto indipendente. Grafica, suoni e carte originali. Ispirato al gioco di parole Taboo; non affiliato a Hasbro o Marmalade Game Studio.',
@@ -806,7 +729,7 @@ function Application() {
                     </Txt>
                     <Txt style={{ color: C.muted, fontSize: 13, lineHeight: 22 }}>
                       {t(
-                        'Nessun account, nessun tracciamento. Preferenze, partita in corso e risultati restano sul dispositivo.',
+                        'Nessun account, nessun tracciamento. Preferenze e partita in corso restano sul dispositivo.',
                       )}
                     </Txt>
                   </View>
@@ -846,7 +769,6 @@ const s = StyleSheet.create({
     borderBottomWidth: 3,
     borderBottomColor: '#00000025',
   },
-  empty: { alignItems: 'center', paddingVertical: 50, gap: 22 },
   modalBackdrop: {
     flex: 1,
     backgroundColor: '#130920D9',

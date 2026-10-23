@@ -35,17 +35,9 @@ I mazzi|||Card decks|||Los mazos|||Die Kartensets|||Les paquets
 Come si gioca|||How to play|||Cómo jugar|||Spielregeln|||Règles du jeu
 Open Taboo by Gleetch, home|||Open Taboo by Gleetch, home|||Open Taboo by Gleetch, inicio|||Open Taboo by Gleetch, Startseite|||Open Taboo by Gleetch, accueil
 OFFLINE & INSIEME|||OFFLINE & TOGETHER|||SIN CONEXIÓN Y EN COMPAÑÍA|||OFFLINE & GEMEINSAM|||HORS LIGNE, ENSEMBLE
-Storico partite|||Match history|||Historial de partidas|||Spielverlauf|||Historique des parties
 Impostazioni|||Settings|||Ajustes|||Einstellungen|||Paramètres
 Salvataggio non disponibile. La partita prosegue; mantieni l’app aperta per conservarla.|||Saving is unavailable. Your game continues; keep the app open to retain your progress.|||No se puede guardar. La partida continúa; mantén la aplicación abierta para conservar el progreso.|||Speichern ist nicht verfügbar. Das Spiel läuft weiter; halte die App geöffnet, um den Fortschritt zu behalten.|||L’enregistrement est indisponible. La partie continue ; gardez l’application ouverte pour conserver votre progression.
 Torna alla home|||Back to home|||Volver al inicio|||Zur Startseite|||Retour à l’accueil
-I VOSTRI MOMENTI DI GLORIA|||YOUR MOMENTS OF GLORY|||VUESTROS MOMENTOS DE GLORIA|||EURE GLANZMOMENTE|||VOS MOMENTS DE GLOIRE
-Le partite da ricordare.|||Games worth remembering.|||Partidas para recordar.|||Spiele, die in Erinnerung bleiben.|||Des parties mémorables.
-Le ultime 20 sfide, salvate solo su questo dispositivo.|||Your last 20 games, saved only on this device.|||Tus últimas 20 partidas, guardadas solo en este dispositivo.|||Die letzten 20 Spiele, nur auf diesem Gerät gespeichert.|||Vos 20 dernières parties, enregistrées uniquement sur cet appareil.
-Il podio vi aspetta.|||The podium awaits.|||El podio os espera.|||Das Siegertreppchen wartet.|||Le podium vous attend.
-Giocate la prima partita per iniziare|||Play your first game to start|||Jugad vuestra primera partida para empezar|||Spielt eure erste Partie und beginnt,|||Jouez votre première partie pour commencer
-a scrivere la vostra storia.|||writing your story.|||a escribir vuestra historia.|||eure Geschichte zu schreiben.|||à écrire votre histoire.
-Creiamo una partita|||Let’s set up a game|||Crear una partida|||Ein Spiel einrichten|||Créer une partie
 round ·|||rounds ·|||rondas ·|||Runden ·|||manches ·
 indovinate|||guessed|||acertadas|||erraten|||trouvés
 OPEN TABOO · PENSA. PARLA. OSA.|||OPEN TABOO · THINK. TALK. DARE.|||OPEN TABOO · PIENSA. HABLA. ATRÉVETE.|||OPEN TABOO · DENKEN. REDEN. WAGEN.|||OPEN TABOO · PENSEZ. PARLEZ. OSEZ.
@@ -60,7 +52,7 @@ Segnali per indovinate, penalità e timer.|||Sounds for correct answers, penalti
 Vibrazione|||Vibration|||Vibración|||Vibration|||Vibrations
 Feedback tattile sui dispositivi compatibili.|||Haptic feedback on supported devices.|||Respuesta háptica en dispositivos compatibles.|||Haptisches Feedback auf unterstützten Geräten.|||Retour haptique sur les appareils compatibles.
 Progetto indipendente. Grafica, suoni e carte originali. Ispirato al gioco di parole Taboo; non affiliato a Hasbro o Marmalade Game Studio.|||Independent project. Original graphics, sounds and cards. Inspired by the word game Taboo; not affiliated with Hasbro or Marmalade Game Studio.|||Proyecto independiente. Gráficos, sonidos y tarjetas originales. Inspirado en el juego de palabras Taboo; sin afiliación con Hasbro ni Marmalade Game Studio.|||Unabhängiges Projekt. Eigene Grafiken, Sounds und Karten. Inspiriert vom Wortspiel Taboo; keine Verbindung zu Hasbro oder Marmalade Game Studio.|||Projet indépendant. Graphismes, sons et cartes originaux. Inspiré du jeu de mots Taboo ; sans affiliation avec Hasbro ou Marmalade Game Studio.
-Nessun account, nessun tracciamento. Preferenze, partita in corso e risultati restano sul dispositivo.|||No account, no tracking. Your preferences, current game and results stay on your device.|||Sin cuenta ni seguimiento. Las preferencias, la partida en curso y los resultados se quedan en el dispositivo.|||Kein Konto, kein Tracking. Einstellungen, laufendes Spiel und Ergebnisse bleiben auf dem Gerät.|||Aucun compte, aucun suivi. Vos préférences, la partie en cours et les résultats restent sur l’appareil.
+Nessun account, nessun tracciamento. Preferenze e partita in corso restano sul dispositivo.|||No account, no tracking. Preferences and your current game stay on your device.|||Sin cuenta ni seguimiento. Las preferencias y la partida en curso se guardan en tu dispositivo.|||Kein Konto, kein Tracking. Einstellungen und das laufende Spiel bleiben auf deinem Gerät.|||Aucun compte, aucun suivi. Les préférences et la partie en cours restent sur votre appareil.
 Perfetto, continuiamo|||Great, let’s continue|||Perfecto, continuemos|||Weiter geht’s|||Parfait, continuons
 NON PUOI DIRE|||DON’T SAY|||NO PUEDES DECIR|||NICHT SAGEN|||MOTS INTERDITS
 UNA PAROLA. MILLE POSSIBILITÀ.|||ONE WORD. ENDLESS POSSIBILITIES.|||UNA PALABRA. MIL POSIBILIDADES.|||EIN WORT. TAUSEND MÖGLICHKEITEN.|||UN MOT. MILLE POSSIBILITÉS.

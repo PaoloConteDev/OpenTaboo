@@ -32,7 +32,7 @@ See the [changelog](CHANGELOG.md) for release notes. Changes under **Unreleased*
 - **Custom decks:** create multiple decks with a name, colour, and your own cards. Each deck belongs to the language selected when you create it and appears only in that language. Mix custom and included decks in any combination.
 - **Configurable matches:** choose the timer, number of rounds, penalties, and skip limit.
 - **Turn review:** correct card outcomes before confirming the score.
-- **Local progress:** resume a saved match and browse the last 20 completed games.
+- **Local progress:** resume a saved match.
 - **Pause and resume:** the timer pauses when the app goes into the background, and the card stays hidden until play resumes.
 - **Animated interface:** purple, coral, and orange styling, rounded cards, local sound effects, and optional haptic feedback.
 - **No account, ads, tracking, or gameplay server.**
@@ -63,7 +63,7 @@ Scores can be negative. Cards are shuffled and do not repeat until the selected 
 
 The first launch uses the device language, including regional variants such as `fr-CA`. Unsupported languages fall back to **English**. A manually selected language is saved locally and takes priority on later launches.
 
-Tap the **flag button to the left of the trophy** to change language. The button shows the active language's flag. Changing language during a live turn pauses the timer and hides the card; team names, scores, and match progress are preserved.
+Tap the **flag button to the left of the settings gear** to change language. The button shows the active language's flag. Changing language during a live turn pauses the timer and hides the card; team names, scores, and match progress are preserved.
 
 | Deck                  | Cards per language |
 | --------------------- | -----------------: |
@@ -115,7 +115,7 @@ Open [localhost:4173](http://localhost:4173). The [phone preview](http://localho
 
 ## Offline behavior and privacy
 
-An installed Android APK works offline from its first launch. The app does not download card packs, call translation services, or require a gameplay backend. Preferences, the current match, and match history are stored on the device using AsyncStorage.
+An installed Android APK works offline from its first launch. The app does not download card packs, call translation services, or require a gameplay backend. Preferences, custom decks, and the current match are stored on the device using AsyncStorage. Settings include a link to the project's GitHub repository below the app version; opening it requires an Internet connection.
 
 The app does not record speech or require microphone access. Another player checks the forbidden words. The Android configuration also excludes overlay and external-storage permissions.
 
