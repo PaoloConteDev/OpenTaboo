@@ -4,6 +4,10 @@ node_modules/
 dist/
 dist-android/
 artifacts/
+credentials.json
+credentials/
+*.jks
+*.keystore
 web-build/
 *.tsbuildinfo
 *.log
